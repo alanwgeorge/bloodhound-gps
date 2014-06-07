@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BloodHound.iml" filepath="$PROJECT_DIR$/BloodHound.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bloodhound/bloodhound.iml" filepath="$PROJECT_DIR$/bloodhound/bloodhound.iml" />
+    </modules>
+  </component>
+</project>
+
