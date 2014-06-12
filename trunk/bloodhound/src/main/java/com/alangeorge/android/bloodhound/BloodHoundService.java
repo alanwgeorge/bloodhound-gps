@@ -17,8 +17,11 @@ import java.sql.SQLException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class BloodHoundService extends Service implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener
-{
+/**
+ * adb -s 10.0.1.28:5555 backup -f data.ab -noapk com.alangeorge.android.bloodhound
+ * dd if=data.ab bs=1 skip=24 | python -c "import zlib,sys;sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf -
+ */
+public class BloodHoundService extends Service implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
     private static final String TAG = "BloodHoundService";
 
     public static final long UPDATE_INTERVAL = 60000L;
