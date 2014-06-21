@@ -57,7 +57,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                 LocationDao.COLUMN_ID,
                 LocationDao.COLUMN_LONGITUDE,
                 LocationDao.COLUMN_LATITUDE,
-                LocationDao.COLUMN_TIME_STRING
+                LocationDao.COLUMN_TIME_STRING,
+                LocationDao.COLUMN_TIME
         };
 
         return new CursorLoader(this, LocationContentProvider.CONTENT_URI, projection, null, null, null);
