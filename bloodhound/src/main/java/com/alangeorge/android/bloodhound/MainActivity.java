@@ -1,6 +1,5 @@
 package com.alangeorge.android.bloodhound;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -15,6 +14,7 @@ import android.widget.SimpleCursorAdapter;
 import com.alangeorge.android.bloodhound.model.dao.LocationDao;
 
 
+@SuppressWarnings("WeakerAccess")
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "MainActivity";
 
@@ -38,6 +38,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         return true;
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -59,9 +60,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                 LocationDao.COLUMN_TIME_STRING
         };
 
-        CursorLoader cursorLoader = new CursorLoader(this, LocationContentProvider.CONTENT_URI, projection, null, null, null);
-
-        return cursorLoader;
+        return new CursorLoader(this, LocationContentProvider.CONTENT_URI, projection, null, null, null);
     }
 
     @Override

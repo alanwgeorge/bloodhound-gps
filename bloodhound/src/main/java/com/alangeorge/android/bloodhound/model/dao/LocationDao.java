@@ -9,9 +9,9 @@ import android.util.Log;
 
 import com.alangeorge.android.bloodhound.model.Location;
 
-import java.sql.SQLException;
 import java.util.Date;
 
+@SuppressWarnings("WeakerAccess")
 public class LocationDao extends SQLiteOpenHelper {
     private static final String TAG = "LocationDao";
     private static final String DATABASE_NAME = "locations.db";
@@ -23,6 +23,7 @@ public class LocationDao extends SQLiteOpenHelper {
     public static final String COLUMN_LONGITUDE = "longitude";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_TIME_STRING = "time_str";
+    @SuppressWarnings("WeakerAccess")
     public static final String[] ALL_COLUMNS = {COLUMN_ID, COLUMN_LATITUDE, COLUMN_LONGITUDE, COLUMN_TIME, COLUMN_TIME_STRING};
 
     public static final String DATABASE_CREATE = "create table " + TABLE_LOCATIONS + " (" + COLUMN_ID
@@ -47,15 +48,17 @@ public class LocationDao extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void open() throws SQLException {
+    public void open() {
         database = getWritableDatabase();
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public synchronized void close() {
         super.close();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Location create(double latitude, double longitude) {
         Date now = new Date();
 
