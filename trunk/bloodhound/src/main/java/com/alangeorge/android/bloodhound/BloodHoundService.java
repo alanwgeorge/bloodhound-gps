@@ -13,7 +13,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 
-import java.sql.SQLException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -21,10 +20,12 @@ import java.util.concurrent.TimeUnit;
  * adb -s 10.0.1.28:5555 backup -f data.ab -noapk com.alangeorge.android.bloodhound
  * dd if=data.ab bs=1 skip=24 | python -c "import zlib,sys;sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf -
  */
+@SuppressWarnings("WeakerAccess")
 public class BloodHoundService extends Service implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
     private static final String TAG = "BloodHoundService";
 
-    public static final long UPDATE_INTERVAL = 60000L;
+    private static final long UPDATE_INTERVAL = 60000L;
+    @SuppressWarnings("UnusedDeclaration")
     public static final String BLOODHOUND_SERVICE_ACTION = "com.alangeorge.android.bloodhound.BloodHoundService";
 
     private static boolean isRunning = false;
@@ -32,8 +33,6 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     private ScheduledThreadPoolExecutor threadPool = new ScheduledThreadPoolExecutor(1, new ServiceThreadFactory());
     private LocationClient locationClient;
     private LocationDao locationDao;
-
-    public BloodHoundService() {    }
 
     @Override
     public void onCreate() {
@@ -56,7 +55,7 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
         }
     }
 
-    protected void onTimerTick() {
+    private void onTimerTick() {
         Location location = locationClient.getLastLocation();
         Log.d(TAG, "location = " + location);
         locationDao.create(location.getLatitude(), location.getLongitude());
@@ -75,12 +74,9 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
         locationClient = new LocationClient(this, this, this);
         locationClient.connect();
         locationDao = new LocationDao(this);
-        try {
-            locationDao.open();
-        } catch (SQLException e) {
-            Log.e(TAG, "could not open location db: " + e.getLocalizedMessage(), e);
-            throw new RuntimeException("could not open location db: " + e.getLocalizedMessage(), e);
-        }
+
+        locationDao.open();
+
         startTimer();
         return START_STICKY;
     }

@@ -15,6 +15,7 @@ import com.alangeorge.android.bloodhound.model.dao.LocationDao;
 import java.util.Arrays;
 import java.util.HashSet;
 
+@SuppressWarnings("WeakerAccess")
 public class LocationContentProvider extends ContentProvider {
     private LocationDao locationDao;
 
@@ -26,16 +27,15 @@ public class LocationContentProvider extends ContentProvider {
     private static final String BASE_PATH = "locations";
 
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
+    @SuppressWarnings("UnusedDeclaration")
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/locations";
+    @SuppressWarnings("UnusedDeclaration")
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/location";
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH, LOCATIONS);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", LOCATION_ID);
-    }
-
-    public LocationContentProvider() {
     }
 
     @Override
@@ -49,7 +49,7 @@ public class LocationContentProvider extends ContentProvider {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = locationDao.getWritableDatabase();
 
-        int rowsDeleted = 0;
+        int rowsDeleted;
 
         switch (uriType) {
             case LOCATIONS:
@@ -81,8 +81,8 @@ public class LocationContentProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = locationDao.getWritableDatabase();
-        int rowsDeleted = 0;
-        long id = 0;
+
+        long id;
 
         switch (uriType) {
             case LOCATIONS:
@@ -133,7 +133,7 @@ public class LocationContentProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = locationDao.getWritableDatabase();
-        int rowsUpdated = 0;
+        int rowsUpdated;
 
         switch (uriType) {
             case LOCATIONS:
