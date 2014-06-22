@@ -13,6 +13,8 @@ import android.util.Log;
 public class BloodHoundReceiver extends BroadcastReceiver {
     private static final String TAG = "BloodHoundReceiver";
 
+    public static final String BLOODHOUND_RECEIVER_ACTION = "com.alangeorge.android.bloodhound.BloodHoundReceiver";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive("+ context + ", " +  intent + ")");

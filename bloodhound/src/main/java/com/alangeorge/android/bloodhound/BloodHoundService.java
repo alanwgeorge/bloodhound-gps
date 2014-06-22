@@ -17,8 +17,12 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * adb -s 10.0.1.28:5555 backup -f data.ab -noapk com.alangeorge.android.bloodhound
- * dd if=data.ab bs=1 skip=24 | python -c "import zlib,sys;sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf -
+ * Below are example commands to access the database of a device with BloodHound installed
+ *
+ * $ adb -s 10.0.1.28:5555 backup -f data.ab -noapk com.alangeorge.android.bloodhound
+ * $ dd if=data.ab bs=1 skip=24 | python -c "import zlib,sys;sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf -
+ * $ sqlite3 apps/com.alangeorge.android.bloodhound/db/locations.db
+ * sqlite> select * from locations;
  */
 @SuppressWarnings("WeakerAccess")
 public class BloodHoundService extends Service implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
@@ -125,6 +129,7 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
         super.onTaskRemoved(rootIntent);
     }
 
+    // start Google Play connection callbacks
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "Google Play Services onConnect()");
@@ -139,4 +144,5 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "Google Play Services onConnectionFailed(" +connectionResult  + ")");
     }
+    // end Google Play connection callbacks
 }
