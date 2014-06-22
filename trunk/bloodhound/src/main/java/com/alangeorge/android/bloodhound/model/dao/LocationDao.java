@@ -1,12 +1,18 @@
 package com.alangeorge.android.bloodhound.model.dao;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 
+import com.alangeorge.android.bloodhound.LocationContentProvider;
 import com.alangeorge.android.bloodhound.model.Location;
 
 import java.util.Date;
@@ -31,9 +37,12 @@ public class LocationDao extends SQLiteOpenHelper {
             + " real not null, " + COLUMN_TIME + " integer not null, " + COLUMN_TIME_STRING + " text not null);";
 
     private SQLiteDatabase database;
+    private Context context;
+    private ContentObserver contentObserver = new LocationContentObserver(null);
 
     public LocationDao(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -75,12 +84,15 @@ public class LocationDao extends SQLiteOpenHelper {
         Location newLocation = cursorToLocation(cursor);
         cursor.close();
 
+        context.getContentResolver().notifyChange(LocationContentProvider.CONTENT_URI, null);
+        context.getContentResolver().notifyChange(LocationContentProvider.CONTENT_URI, contentObserver);
+
         Log.d(TAG, "new location = " + newLocation);
 
         return newLocation;
     }
 
-    private Location cursorToLocation(Cursor cursor) {
+    public static Location cursorToLocation(Cursor cursor) {
         Location location = new Location();
 
         location.setId(cursor.getLong(0));
@@ -89,5 +101,36 @@ public class LocationDao extends SQLiteOpenHelper {
         location.setTime(new Date(cursor.getLong(3)));
 
         return location;
+    }
+
+    private class LocationContentObserver extends ContentObserver {
+        public static final String TAG = "LocationContentObserver";
+        /**
+         * Creates a content observer.
+         *
+         * @param handler The handler to run {@link #onChange} on, or null if none.
+         */
+        public LocationContentObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public boolean deliverSelfNotifications() {
+            Log.d(TAG, "deliverSelfNotifications()");
+            return super.deliverSelfNotifications();
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            Log.d(TAG, "onChange(" + selfChange + ")");
+            super.onChange(selfChange);
+        }
+
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            Log.d(TAG, "onChange(" + selfChange + ", " + uri + ")");
+            super.onChange(selfChange, uri);
+        }
     }
 }
