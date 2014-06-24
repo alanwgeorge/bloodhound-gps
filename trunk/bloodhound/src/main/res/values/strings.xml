@@ -4,5 +4,7 @@
     <string name="app_name">BloodHound</string>
     <string name="action_start">Start</string>
     <string name="no_locations">No Locations Found</string>
+    <string name="map_view_name">Map View</string>
+    <string name="action_diff_view">Diff View</string>
 
 </resources>
