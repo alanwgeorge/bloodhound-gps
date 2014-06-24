@@ -17,54 +17,50 @@ import com.alangeorge.android.bloodhound.model.Location;
 
 import java.util.Date;
 
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_LOCATIONS;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_ALL_COLUMNS;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_ID;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LATITUDE;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LONGITUDE;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
+
+
 @SuppressWarnings("WeakerAccess")
-public class LocationDao extends SQLiteOpenHelper {
+public class LocationDao {
     private static final String TAG = "LocationDao";
-    private static final String DATABASE_NAME = "locations.db";
-    private static final int DATABASE_VERSION = 2;
-
-    public static final String TABLE_LOCATIONS = "locations";
-    public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_LATITUDE = "latitude";
-    public static final String COLUMN_LONGITUDE = "longitude";
-    public static final String COLUMN_TIME = "time";
-    public static final String COLUMN_TIME_STRING = "time_str";
-    @SuppressWarnings("WeakerAccess")
-    public static final String[] ALL_COLUMNS = {COLUMN_ID, COLUMN_LATITUDE, COLUMN_LONGITUDE, COLUMN_TIME, COLUMN_TIME_STRING};
-
-    public static final String DATABASE_CREATE = "create table " + TABLE_LOCATIONS + " (" + COLUMN_ID
-            + " integer primary key autoincrement, " + COLUMN_LATITUDE + " real not null, " + COLUMN_LONGITUDE
-            + " real not null, " + COLUMN_TIME + " integer not null, " + COLUMN_TIME_STRING + " text not null);";
+//    private static final String DATABASE_NAME = "locations.db";
+//    private static final int DATABASE_VERSION = 3;
+//
+//    public static final String TABLE_LOCATIONS = "locations";
+//    public static final String COLUMN_ID = "_id";
+//    public static final String COLUMN_LATITUDE = "latitude";
+//    public static final String COLUMN_LONGITUDE = "longitude";
+//    public static final String COLUMN_TIME = "time";
+//    public static final String COLUMN_TIME_STRING = "time_str";
+//    @SuppressWarnings("WeakerAccess")
+//    public static final String[] LOCATIONS_DIFF_ALL_COLUMNS = {COLUMN_ID, COLUMN_LATITUDE, COLUMN_LONGITUDE, COLUMN_TIME, COLUMN_TIME_STRING};
+//
+//    public static final String DATABASE_CREATE = "create table " + TABLE_LOCATIONS + " (" + COLUMN_ID
+//            + " integer primary key autoincrement, " + COLUMN_LATITUDE + " real not null, " + COLUMN_LONGITUDE
+//            + " real not null, " + COLUMN_TIME + " integer not null, " + COLUMN_TIME_STRING + " text not null);";
 
     private SQLiteDatabase database;
+    private SQLiteOpenHelper dbHelper;
     private Context context;
     private ContentObserver contentObserver = new LocationContentObserver(null);
 
     public LocationDao(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        dbHelper = new DBHelper(context);
         this.context = context;
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DATABASE_CREATE);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
-        onCreate(db);
-    }
-
     public void open() {
-        database = getWritableDatabase();
+        database = dbHelper.getWritableDatabase();
     }
 
-    @SuppressWarnings("EmptyMethod")
-    @Override
     public synchronized void close() {
-        super.close();
+        dbHelper.close();
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -72,20 +68,20 @@ public class LocationDao extends SQLiteOpenHelper {
         Date now = new Date();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_LATITUDE, latitude);
-        values.put(COLUMN_LONGITUDE, longitude);
-        values.put(COLUMN_TIME, now.getTime());
-        values.put(COLUMN_TIME_STRING, now.toString());
+        values.put(LOCATIONS_COLUMN_LATITUDE, latitude);
+        values.put(LOCATIONS_COLUMN_LONGITUDE, longitude);
+        values.put(LOCATIONS_COLUMN_TIME, now.getTime());
+        values.put(LOCATIONS_COLUMN_TIME_STRING, now.toString());
 
         long insertId = database.insert(TABLE_LOCATIONS, null, values);
 
-        Cursor cursor = database.query(TABLE_LOCATIONS, ALL_COLUMNS, COLUMN_ID + " = " + insertId, null, null, null, null);
+        Cursor cursor = database.query(TABLE_LOCATIONS, LOCATIONS_ALL_COLUMNS, LOCATIONS_COLUMN_ID + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         Location newLocation = cursorToLocation(cursor);
         cursor.close();
 
-        context.getContentResolver().notifyChange(LocationContentProvider.CONTENT_URI, null);
-        context.getContentResolver().notifyChange(LocationContentProvider.CONTENT_URI, contentObserver);
+        context.getContentResolver().notifyChange(LocationContentProvider.LOCATIONS_CONTENT_URI, null);
+        context.getContentResolver().notifyChange(LocationContentProvider.LOCATIONS_CONTENT_URI, contentObserver);
 
         Log.d(TAG, "new location = " + newLocation);
 

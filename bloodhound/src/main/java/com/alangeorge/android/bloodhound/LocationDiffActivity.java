@@ -14,20 +14,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+
+import java.util.Date;
 
 import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_ID;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LATITUDE;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LONGITUDE;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_ALL_COLUMNS;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LATITUDE1;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LATITUDE2;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LONGITUDE1;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LONGITUDE2;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_TIME2;
 
 
 @SuppressWarnings("WeakerAccess")
-public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LocationDiffActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "MainActivity";
 
-    private SimpleCursorAdapter adapter;
+    private LocationDiffCursorAdaptor adapter;
 
 
     @Override
@@ -35,6 +39,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //noinspection ConstantConditions
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         fillData();
         registerForContextMenu(getListView());
     }
@@ -56,9 +62,6 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         int id = item.getItemId();
         if (id == R.id.action_start) {
             sendBroadcast(new Intent(BLOODHOUND_RECEIVER_ACTION));
-        } else if (id == R.id.action_diff_view) {
-            Intent diffViewIntent = new Intent(this, LocationDiffActivity.class);
-            startActivity(diffViewIntent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -78,15 +81,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, "onCreateLoader()");
-        String[] projection = {
-                LOCATIONS_COLUMN_ID,
-                LOCATIONS_COLUMN_LONGITUDE,
-                LOCATIONS_COLUMN_LATITUDE,
-                LOCATIONS_COLUMN_TIME_STRING,
-                LOCATIONS_COLUMN_TIME
-        };
 
-        return new CursorLoader(this, LocationContentProvider.LOCATIONS_CONTENT_URI, projection, null, null, LOCATIONS_COLUMN_TIME + " desc");
+        return new CursorLoader(this, LocationContentProvider.LOCATIONS_DIFF_CONTENT_URI, LOCATIONS_DIFF_ALL_COLUMNS, null, null, LOCATIONS_DIFF_COLUMN_TIME2 + " desc");
     }
 
     @Override
@@ -104,22 +100,45 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     private void fillData() {
         String[] from = new String[] {
-                LOCATIONS_COLUMN_LATITUDE,
-                LOCATIONS_COLUMN_LONGITUDE,
-                LOCATIONS_COLUMN_TIME_STRING
+                LOCATIONS_DIFF_COLUMN_LATITUDE1,
+                LOCATIONS_DIFF_COLUMN_LONGITUDE1,
+                LOCATIONS_DIFF_COLUMN_LATITUDE2,
+                LOCATIONS_DIFF_COLUMN_LONGITUDE2,
+                LOCATIONS_DIFF_COLUMN_TIME2
         };
 
         int[] to = new int[] {
-                R.id.latitudeTextView,
-                R.id.longitudeTextView,
+                R.id.latitude1TextView,
+                R.id.longitude1TextView,
+                R.id.latitude2TextView,
+                R.id.longitude2TextView,
                 R.id.timeTextView
         };
 
 //        getLoaderManager().enableDebugLogging(true);
         getLoaderManager().initLoader(0, null, this);
         
-        adapter = new SimpleCursorAdapter(this, R.layout.location_list_item, null, from, to, 0);
+        adapter = new LocationDiffCursorAdaptor(this, R.layout.location_diff_list_item, null, from, to, 0);
+        adapter.setViewBinder(new LocationDiffViewBinder());
 
         setListAdapter(adapter);
+    }
+
+    private class LocationDiffViewBinder implements SimpleCursorAdapter.ViewBinder {
+        @SuppressWarnings("UnusedDeclaration")
+        private static final String TAG = "LocationDiffViewBinder";
+
+        @Override
+        public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+//            Log.d(TAG, "setViewValue(" + view + ", " + cursor + ", " + columnIndex + ")");
+
+            // 10 is the second recorded location time stamp in long
+            if (columnIndex == 10 && view instanceof TextView) {
+                ((TextView) view).setText(new Date(cursor.getLong(10)).toString());
+                return true;
+            }
+
+            return false;
+        }
     }
 }
