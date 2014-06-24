@@ -6,7 +6,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,6 +15,9 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
+import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_ACTION;
+import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_START;
+import static com.alangeorge.android.bloodhound.MapDetailActivity.MAP_ACTION_LOCATION;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_ID;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LATITUDE;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LONGITUDE;
@@ -69,8 +71,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
         Intent detailIntent = new Intent(this, MapDetailActivity.class);
 
-        Uri locationUri = Uri.parse(LocationContentProvider.LOCATIONS_CONTENT_URI + "/" + id);
-        detailIntent.putExtra(LocationContentProvider.CONTENT_ITEM_TYPE, locationUri);
+        detailIntent.putExtra(EXTRA_ACTION, MAP_ACTION_LOCATION);
+        detailIntent.putExtra(EXTRA_START, id);
         startActivity(detailIntent);
     }
 

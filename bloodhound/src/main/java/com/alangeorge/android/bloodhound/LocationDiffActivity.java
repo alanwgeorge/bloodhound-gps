@@ -6,7 +6,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,14 +15,23 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.alangeorge.android.bloodhound.model.LocationDiff;
+
+import java.text.DateFormat;
 import java.util.Date;
 
 import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
+import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_ACTION;
+import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_END;
+import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_START;
+import static com.alangeorge.android.bloodhound.MapDetailActivity.MAP_ACTION_LOCATION_DIFF;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_ALL_COLUMNS;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LATITUDE1;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LATITUDE2;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LATITUDE_DIFF;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LONGITUDE1;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LONGITUDE2;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LONGITUDE_DIFF;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_TIME2;
 
 
@@ -70,10 +78,14 @@ public class LocationDiffActivity extends ListActivity implements LoaderManager.
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         Log.d(TAG, "onListItemClick(" + position + ")");
 
+        // convenience object set in LocationDiffCursorAdaptor.getView()
+        LocationDiff diffObj = (LocationDiff) view.getTag(R.id.location_diff_view_tag);
+
         Intent detailIntent = new Intent(this, MapDetailActivity.class);
 
-        Uri locationUri = Uri.parse(LocationContentProvider.LOCATIONS_CONTENT_URI + "/" + id);
-        detailIntent.putExtra(LocationContentProvider.CONTENT_ITEM_TYPE, locationUri);
+        detailIntent.putExtra(EXTRA_ACTION, MAP_ACTION_LOCATION_DIFF);
+        detailIntent.putExtra(EXTRA_START, diffObj.getFromLocation().getId());
+        detailIntent.putExtra(EXTRA_END, diffObj.getToLocation().getId());
         startActivity(detailIntent);
     }
 
@@ -82,7 +94,13 @@ public class LocationDiffActivity extends ListActivity implements LoaderManager.
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, "onCreateLoader()");
 
-        return new CursorLoader(this, LocationContentProvider.LOCATIONS_DIFF_CONTENT_URI, LOCATIONS_DIFF_ALL_COLUMNS, null, null, LOCATIONS_DIFF_COLUMN_TIME2 + " desc");
+        return new CursorLoader(
+                this,
+                LocationContentProvider.LOCATIONS_DIFF_CONTENT_URI,
+                LOCATIONS_DIFF_ALL_COLUMNS,
+                LOCATIONS_DIFF_COLUMN_LATITUDE_DIFF +  " > 0 or " + LOCATIONS_DIFF_COLUMN_LONGITUDE_DIFF + " > 0",
+                null,
+                LOCATIONS_DIFF_COLUMN_TIME2 + " desc");
     }
 
     @Override
@@ -118,7 +136,7 @@ public class LocationDiffActivity extends ListActivity implements LoaderManager.
 //        getLoaderManager().enableDebugLogging(true);
         getLoaderManager().initLoader(0, null, this);
         
-        adapter = new LocationDiffCursorAdaptor(this, R.layout.location_diff_list_item, null, from, to, 0);
+        adapter = new LocationDiffCursorAdaptor(this, R.layout.location_diff_list_item_v2, null, from, to, 0);
         adapter.setViewBinder(new LocationDiffViewBinder());
 
         setListAdapter(adapter);
@@ -134,7 +152,10 @@ public class LocationDiffActivity extends ListActivity implements LoaderManager.
 
             // 10 is the second recorded location time stamp in long
             if (columnIndex == 10 && view instanceof TextView) {
-                ((TextView) view).setText(new Date(cursor.getLong(10)).toString());
+                Date date = new Date(cursor.getLong(10));
+
+                ((TextView) view).setText(DateFormat.getInstance().format(date));
+
                 return true;
             }
 
