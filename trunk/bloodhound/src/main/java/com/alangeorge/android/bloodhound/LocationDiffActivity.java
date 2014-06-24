@@ -98,7 +98,7 @@ public class LocationDiffActivity extends ListActivity implements LoaderManager.
                 this,
                 LocationContentProvider.LOCATIONS_DIFF_CONTENT_URI,
                 LOCATIONS_DIFF_ALL_COLUMNS,
-                LOCATIONS_DIFF_COLUMN_LATITUDE_DIFF +  " > 0 or " + LOCATIONS_DIFF_COLUMN_LONGITUDE_DIFF + " > 0",
+                LOCATIONS_DIFF_COLUMN_LATITUDE_DIFF +  " != 0 or " + LOCATIONS_DIFF_COLUMN_LONGITUDE_DIFF + " != 0",
                 null,
                 LOCATIONS_DIFF_COLUMN_TIME2 + " desc");
     }
