@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class Location {
     private long id;
-    private double latitude;
-    private double longitude;
+    private float latitude;
+    private float longitude;
     private Date time;
 
     public long getId() {
@@ -16,7 +16,7 @@ public class Location {
         this.id = id;
     }
 
-    public double getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
@@ -24,7 +24,7 @@ public class Location {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 

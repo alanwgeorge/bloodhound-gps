@@ -40,9 +40,10 @@ public class LocationContentProvider extends ContentProvider {
     public static final Uri LOCATIONS_DIFF_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + LOCATIONS_DIFF_PATH);
 //    @SuppressWarnings("UnusedDeclaration")
 //    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/locations";
+    @SuppressWarnings("UnusedDeclaration")
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/location";
-//    @SuppressWarnings("UnusedDeclaration")
-//    public static final String CONTENT_DIFF_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/locations_diff";
+    @SuppressWarnings("UnusedDeclaration")
+    public static final String CONTENT_DIFF_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/locations_diff";
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
