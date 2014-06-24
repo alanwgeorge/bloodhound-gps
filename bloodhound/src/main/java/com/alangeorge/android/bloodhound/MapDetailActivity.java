@@ -12,7 +12,10 @@ import com.alangeorge.android.bloodhound.model.dao.LocationDao;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_ID;
@@ -76,6 +79,7 @@ public class MapDetailActivity extends Activity {
 
         LatLng latLng = new LatLng(location.getLongitude(), location.getLatitude());
 
+        assert getFragmentManager().findFragmentById(R.id.map) != null;
         GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
         map.addMarker(new MarkerOptions().position(latLng).title(location.getTime().toString()));
@@ -94,19 +98,37 @@ public class MapDetailActivity extends Activity {
         Location startLocation = resolveLocation(startLocationUri);
         Location endLocation = resolveLocation(endLocationUri);
 
-        LatLng startLatLng = new LatLng(startLocation.getLongitude(), startLocation.getLatitude());
-        LatLng endLatLng = new LatLng(endLocation.getLongitude(), endLocation.getLatitude());
+        final LatLng startLatLng = new LatLng(startLocation.getLongitude(), startLocation.getLatitude());
+        final LatLng endLatLng = new LatLng(endLocation.getLongitude(), endLocation.getLatitude());
 
-        GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        assert getFragmentManager().findFragmentById(R.id.map) != null;
+        final GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
-        map.addMarker(new MarkerOptions().position(startLatLng).title(startLocation.getTime().toString()));
-        map.addMarker(new MarkerOptions().position(endLatLng).title(endLocation.getTime().toString()));
+        map.addMarker(new MarkerOptions()
+                .position(startLatLng)
+                .title(startLocation.getTime().toString())
+                .snippet("Start")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
-        // Move the camera instantly to point with a zoom of 15.
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(startLatLng, 15));
+        map.addMarker(new MarkerOptions()
+                .position(endLatLng)
+                .title(endLocation.getTime().toString())
+                .snippet("End")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
-        // Zoom in, animating the camera.
-        map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+        // here we set the map to be bounded by our start and end points, we first must
+        // let the map layout and then set the bounds, so we do it in the change listener
+        map.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition arg0) {
+                // Move camera.
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                builder.include(startLatLng).include(endLatLng);
+                map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 350));
+                // Remove listener to prevent position reset on camera move.
+                map.setOnCameraChangeListener(null);
+            }
+        });
     }
 
     private Location resolveLocation(Uri locationUri) {
