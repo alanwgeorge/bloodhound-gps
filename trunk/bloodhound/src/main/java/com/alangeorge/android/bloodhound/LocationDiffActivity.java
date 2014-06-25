@@ -136,7 +136,7 @@ public class LocationDiffActivity extends ListActivity implements LoaderManager.
 //        getLoaderManager().enableDebugLogging(true);
         getLoaderManager().initLoader(0, null, this);
         
-        adapter = new LocationDiffCursorAdaptor(this, R.layout.location_diff_list_item_v2, null, from, to, 0);
+        adapter = new LocationDiffCursorAdaptor(this, R.layout.location_diff_list_item_v3, null, from, to, 0);
         adapter.setViewBinder(new LocationDiffViewBinder());
 
         setListAdapter(adapter);

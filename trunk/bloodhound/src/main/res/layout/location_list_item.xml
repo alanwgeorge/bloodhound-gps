@@ -6,36 +6,67 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/latitudeTextView"
-        android:layout_marginRight="5dip"
-        tools:ignore="HardcodedText"/>
+        android:shrinkColumns="0,2"
+        android:stretchColumns="1,3">
 
-     <TextView
+        <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/longitudeTextView"
-            tools:ignore="HardcodedText"/>
+            android:layout_height="match_parent">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Lat:"
+                tools:ignore="HardcodedText"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/timeTextView"
-        tools:ignore="HardcodedText"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="37.7594"
+                android:id="@+id/latitudeTextView"
+                android:layout_marginRight="5dip"
+                tools:ignore="HardcodedText"
+                />
 
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Long:"
+                tools:ignore="HardcodedText"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="-122.415"
+                android:id="@+id/longitudeTextView"
+                tools:ignore="HardcodedText"/>
+
+
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Sun Jun 22 13:32:00 PDT 2014"
+                android:id="@+id/timeTextView"
+                tools:ignore="HardcodedText"
+                android:layout_span="4"/>
+
+        </TableRow>
+
+    </TableLayout>
 </LinearLayout>
