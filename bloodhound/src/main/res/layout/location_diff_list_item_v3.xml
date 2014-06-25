@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:id="@+id/diff_list_item"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1,2">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:showDividers="none"
+            >
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="From:"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:ignore="HardcodedText"
+                android:layout_marginRight="5dip"
+                android:layout_span="1"
+                android:layout_column="0"/>
+
+            <TextView
+                android:id="@+id/latitude1TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:text="37.7594"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:ignore="HardcodedText"
+                android:layout_span="1"
+                android:layout_column="1"/>
+
+            <TextView
+                android:id="@+id/longitude1TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:text="-122.415"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:ignore="HardcodedText"
+                android:layout_span="1"
+                android:layout_column="2"/>
+
+        </TableRow>
+
+
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:text="To:"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:ignore="HardcodedText"/>
+
+            <TextView
+                android:id="@+id/latitude2TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:text="37.7594"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:ignore="HardcodedText"/>
+
+            <TextView
+                android:id="@+id/longitude2TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:text="-122.415"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:ignore="HardcodedText"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:text="Distance(m):"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:ignore="HardcodedText"/>
+
+            <TextView
+                android:id="@+id/distanceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="123"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:ignore="HardcodedText"/>
+
+            <TextView
+                android:id="@+id/timeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sun Jun 22 13:32:00 PDT 2014"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:ignore="HardcodedText"/>
+
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
