@@ -6,5 +6,7 @@
     <string name="no_locations">No Locations Found</string>
     <string name="map_view_name">Map View</string>
     <string name="action_diff_view">Diff View</string>
+    <string name="title_section1">Locations</string>
+    <string name="title_section2">Location Diff</string>
 
 </resources>
