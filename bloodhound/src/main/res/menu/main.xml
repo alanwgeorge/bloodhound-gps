@@ -4,5 +4,4 @@
     tools:context="com.alangeorge.android.bloodhound.MainActivity" >
 
     <item android:id="@+id/action_start" android:title="@string/action_start" android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_diff_view" android:title="@string/action_diff_view" android:orderInCategory="100" app:showAsAction="never" />
 </menu>
