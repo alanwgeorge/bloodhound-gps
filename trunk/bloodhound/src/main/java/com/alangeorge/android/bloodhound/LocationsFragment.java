@@ -1,6 +1,6 @@
 package com.alangeorge.android.bloodhound;
 
-import android.app.ListActivity;
+import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -8,13 +8,13 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
+import static com.alangeorge.android.bloodhound.LocationContentProvider.LOCATIONS_CONTENT_URI;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_ACTION;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_START;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.MAP_ACTION_LOCATION;
@@ -24,56 +24,34 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COL
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
 
+/**
+* Created by ageo on 6/29/14.
+*/
+public class LocationsFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String TAG = "LocationsFragment";
 
-@SuppressWarnings("WeakerAccess")
-public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = "MainActivity";
+    private static final String ARG_SECTION_NUMBER = "section_number";
 
     private SimpleCursorAdapter adapter;
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate()");
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.activity_main, container, false);
         fillData();
-        registerForContextMenu(getListView());
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @SuppressWarnings("SimplifiableIfStatement")
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_start) {
-            sendBroadcast(new Intent(BLOODHOUND_RECEIVER_ACTION));
-        } else if (id == R.id.action_diff_view) {
-            Intent diffViewIntent = new Intent(this, LocationDiffActivity.class);
-            startActivity(diffViewIntent);
-        }
-        return super.onOptionsItemSelected(item);
+        return rootView;
     }
 
     @Override
-    protected void onListItemClick(ListView listView, View view, int position, long id) {
+    public void onListItemClick(ListView listView, View view, int position, long id) {
         Log.d(TAG, "onListItemClick(" + position + ")");
 
-        Intent detailIntent = new Intent(this, MapDetailActivity.class);
+        Intent detailIntent = new Intent(getActivity(), MapDetailActivity.class);
 
         detailIntent.putExtra(EXTRA_ACTION, MAP_ACTION_LOCATION);
         detailIntent.putExtra(EXTRA_START, id);
         startActivity(detailIntent);
     }
 
-    //start LoaderManager.LoaderCallbacks<Cursor>
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, "onCreateLoader()");
@@ -85,7 +63,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                 LOCATIONS_COLUMN_TIME
         };
 
-        return new CursorLoader(this, LocationContentProvider.LOCATIONS_CONTENT_URI, projection, null, null, LOCATIONS_COLUMN_TIME + " desc");
+        return new CursorLoader(getActivity(), LOCATIONS_CONTENT_URI, projection, null, null, LOCATIONS_COLUMN_TIME + " desc");
     }
 
     @Override
@@ -99,7 +77,6 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         Log.d(TAG, "onLoaderReset()");
         adapter.swapCursor(null);
     }
-    //end LoaderManager.LoaderCallbacks<Cursor>
 
     private void fillData() {
         String[] from = new String[] {
@@ -114,10 +91,10 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                 R.id.timeTextView
         };
 
-//        getLoaderManager().enableDebugLogging(true);
+        //getLoaderManager().enableDebugLogging(true);
         getLoaderManager().initLoader(0, null, this);
-        
-        adapter = new SimpleCursorAdapter(this, R.layout.location_list_item, null, from, to, 0);
+
+        adapter = new SimpleCursorAdapter(getActivity(), R.layout.location_list_item, null, from, to, 0);
 
         setListAdapter(adapter);
     }
