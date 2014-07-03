@@ -33,7 +33,7 @@
             android:label="@string/map_view_name" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".TabsMainActivity" />
         </activity>
 
         <activity

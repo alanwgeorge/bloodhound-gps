@@ -8,5 +8,10 @@
     <string name="action_diff_view">Diff View</string>
     <string name="title_section1">Locations</string>
     <string name="title_section2">Location Diff</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_geofence_select">GEOFence Select</string>
+    <string name="action_bar_title_location">Location Map</string>
+    <string name="action_bar_title_location_diff">Location Diff Map</string>
+    <string name="action_bar_title_geofence_selection">GEOFence Selection</string>
 
 </resources>

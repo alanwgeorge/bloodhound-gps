@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.alangeorge.android.bloodhound.model.Location;
 import com.alangeorge.android.bloodhound.model.dao.LocationDao;
@@ -30,6 +31,7 @@ public class MapDetailActivity extends Activity {
 
     public static final int MAP_ACTION_LOCATION = 1;
     public static final int MAP_ACTION_LOCATION_DIFF = 2;
+    public static final int MAP_ACTION_GEOFENCE_SELECT = 3;
     public static final String EXTRA_ACTION = "map_action_extra_action";
     public static final String EXTRA_START = "map_action_extra_start";
     public static final String EXTRA_END = "map_action_extra_end";
@@ -49,23 +51,28 @@ public class MapDetailActivity extends Activity {
 
         switch (action) {
             case MAP_ACTION_LOCATION:
+                getActionBar().setTitle(R.string.action_bar_title_location);
                 showSinglePoint(startLocationId);
                 break;
             case MAP_ACTION_LOCATION_DIFF:
+                getActionBar().setTitle(R.string.action_bar_title_location_diff);
                 endLocationId = getIntent().getExtras().getLong(EXTRA_END);
                 showStartEndPoints(startLocationId, endLocationId);
+                break;
+            case MAP_ACTION_GEOFENCE_SELECT:
+                getActionBar().setTitle(R.string.action_bar_title_geofence_selection);
+                startGeoFenceSelection();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown Action: " + action);
         }
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -129,6 +136,29 @@ public class MapDetailActivity extends Activity {
                 map.setOnCameraChangeListener(null);
             }
         });
+    }
+
+    private void startGeoFenceSelection() {
+        assert getFragmentManager().findFragmentById(R.id.map) != null;
+        GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                Toast.makeText(getApplicationContext(), latLng.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        map.setMyLocationEnabled(true);
+
+        android.location.Location myLocation = map.getMyLocation();
+
+        LatLng myLatLng = null;
+
+        if (myLocation != null) {
+            myLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15));
+        }
     }
 
     private Location resolveLocation(Uri locationUri) {
