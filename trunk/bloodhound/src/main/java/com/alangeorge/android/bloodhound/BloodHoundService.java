@@ -51,7 +51,7 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
         }
 
         if (! isRunning) {
-            Log.d(TAG, "isRuning false, scheduling timer thread");
+            Log.d(TAG, "isRunning false, scheduling timer thread");
             threadPool.scheduleAtFixedRate(new Thread(){ public void run() {onTimerTick();}}, 1000L, UPDATE_INTERVAL, TimeUnit.MILLISECONDS);
             isRunning = true;
         } else {
