@@ -14,7 +14,6 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
 
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
