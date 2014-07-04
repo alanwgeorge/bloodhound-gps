@@ -29,21 +29,6 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COL
 @SuppressWarnings("WeakerAccess")
 public class LocationDao {
     private static final String TAG = "LocationDao";
-//    private static final String DATABASE_NAME = "locations.db";
-//    private static final int DATABASE_VERSION = 3;
-//
-//    public static final String TABLE_LOCATIONS = "locations";
-//    public static final String COLUMN_ID = "_id";
-//    public static final String COLUMN_LATITUDE = "latitude";
-//    public static final String COLUMN_LONGITUDE = "longitude";
-//    public static final String COLUMN_TIME = "time";
-//    public static final String COLUMN_TIME_STRING = "time_str";
-//    @SuppressWarnings("WeakerAccess")
-//    public static final String[] LOCATIONS_DIFF_ALL_COLUMNS = {COLUMN_ID, COLUMN_LATITUDE, COLUMN_LONGITUDE, COLUMN_TIME, COLUMN_TIME_STRING};
-//
-//    public static final String DATABASE_CREATE = "create table " + TABLE_LOCATIONS + " (" + COLUMN_ID
-//            + " integer primary key autoincrement, " + COLUMN_LATITUDE + " real not null, " + COLUMN_LONGITUDE
-//            + " real not null, " + COLUMN_TIME + " integer not null, " + COLUMN_TIME_STRING + " text not null);";
 
     private SQLiteDatabase database;
     private SQLiteOpenHelper dbHelper;
