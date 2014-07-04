@@ -83,7 +83,8 @@ public class LocationContentProvider extends ContentProvider {
         }
 
         //noinspection ConstantConditions
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(LOCATIONS_CONTENT_URI, null);
+        getContext().getContentResolver().notifyChange(LOCATIONS_DIFF_CONTENT_URI, null);
 
         return rowsDeleted;
     }

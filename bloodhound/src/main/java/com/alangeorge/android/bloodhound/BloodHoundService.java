@@ -37,14 +37,15 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     private static final String TAG = "BloodHoundService";
 
     private static final long UPDATE_INTERVAL = 60000L;
+    private static final float MIN_CHANGE_TO_REPORT = 0.0f;
 
+    @SuppressWarnings("UnusedDeclaration")
     public static final String BLOODHOUND_SERVICE_ACTION = "com.alangeorge.android.bloodhound.BloodHoundService";
 
     private static boolean isRunning = false;
     private static Date lastUpdate;
 
     private ScheduledThreadPoolExecutor threadPool = new ScheduledThreadPoolExecutor(1, new ServiceThreadFactory());
-//    private LocationClient locationClient;
 
     private static final LocationListener locationListener = new LocationListener() {
 
@@ -78,7 +79,7 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, UPDATE_INTERVAL, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, UPDATE_INTERVAL, MIN_CHANGE_TO_REPORT, locationListener);
     }
 
     private void startTimer() {
@@ -97,11 +98,9 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     }
 
     private void onTimerTick() {
-//        Location location = locationClient.getLastLocation();
-//        Log.d(TAG, "location = " + location);
-//
-//        addLocation(location);
         Log.d(TAG, "lastUpdate: " + lastUpdate.toString());
+        Log.d(TAG, "now: " + new Date().toString());
+
     }
 
     private static void addLocation(Location location) {
@@ -124,9 +123,6 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand(" + intent + ", " + flags + ", " + startId +")");
-//        locationClient = new LocationClient(this, this, this);
-//        locationClient.connect();
-//
         startTimer();
         return START_STICKY;
     }
@@ -134,7 +130,6 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy()");
-//        locationClient.disconnect();
         super.onDestroy();
     }
 

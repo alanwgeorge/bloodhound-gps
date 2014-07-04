@@ -1,15 +1,12 @@
 package com.alangeorge.android.bloodhound;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.alangeorge.android.bloodhound.model.Location;
-import com.alangeorge.android.bloodhound.model.dao.LocationDao;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -18,12 +15,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_ID;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LATITUDE;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LONGITUDE;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
 
 public class MapDetailActivity extends Activity {
     @SuppressWarnings("UnusedDeclaration")
@@ -153,7 +144,7 @@ public class MapDetailActivity extends Activity {
 
         android.location.Location myLocation = map.getMyLocation();
 
-        LatLng myLatLng = null;
+        LatLng myLatLng;
 
         if (myLocation != null) {
             myLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
