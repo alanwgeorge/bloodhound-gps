@@ -4,11 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,10 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_ACTION;
-import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_END;
-import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_START;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.MAP_ACTION_GEOFENCE_SELECT;
-import static com.alangeorge.android.bloodhound.MapDetailActivity.MAP_ACTION_LOCATION_DIFF;
 
 public class TabsMainActivity extends Activity implements ActionBar.OnNavigationListener {
     private static final String TAG = "TabsMainActivity";
@@ -61,30 +54,6 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
                 ),
                 this
         );
-
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
-
-            @Override
-            public void onLocationChanged(Location location) {
-                Log.d(TAG, "onLocationChanged(" + location + ")");
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                Log.d(TAG, "onStatusChanged(" + provider + ", " + status + ", " + extras + ")");
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                Log.d(TAG, "onProviderChanged(" + provider + ")");
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                Log.d(TAG, "onProviderDisabled(" + provider + ")");
-            }
-        });
     }
 
     @Override

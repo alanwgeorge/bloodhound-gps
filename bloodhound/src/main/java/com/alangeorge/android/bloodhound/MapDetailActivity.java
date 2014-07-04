@@ -82,7 +82,7 @@ public class MapDetailActivity extends Activity {
     private void showSinglePoint(long startLocationId) {
         Uri locationUri = Uri.parse(LocationContentProvider.LOCATIONS_CONTENT_URI + "/" + startLocationId);
 
-        Location location = resolveLocation(locationUri);
+        Location location = Location.resolveLocation(locationUri);
 
         LatLng latLng = new LatLng(location.getLongitude(), location.getLatitude());
 
@@ -102,8 +102,8 @@ public class MapDetailActivity extends Activity {
         Uri startLocationUri = Uri.parse(LocationContentProvider.LOCATIONS_CONTENT_URI + "/" + startLocationId);
         Uri endLocationUri = Uri.parse(LocationContentProvider.LOCATIONS_CONTENT_URI + "/" + endLocationId);
 
-        Location startLocation = resolveLocation(startLocationUri);
-        Location endLocation = resolveLocation(endLocationUri);
+        Location startLocation = Location.resolveLocation(startLocationUri);
+        Location endLocation = Location.resolveLocation(endLocationUri);
 
         final LatLng startLatLng = new LatLng(startLocation.getLongitude(), startLocation.getLatitude());
         final LatLng endLatLng = new LatLng(endLocation.getLongitude(), endLocation.getLatitude());
@@ -160,25 +160,4 @@ public class MapDetailActivity extends Activity {
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15));
         }
     }
-
-    private Location resolveLocation(Uri locationUri) {
-        String[] projection = {
-                LOCATIONS_COLUMN_ID,
-                LOCATIONS_COLUMN_LONGITUDE,
-                LOCATIONS_COLUMN_LATITUDE,
-                LOCATIONS_COLUMN_TIME,
-                LOCATIONS_COLUMN_TIME_STRING
-        };
-
-        Cursor cursor = getContentResolver().query(locationUri, projection, null, null, null);
-
-        Location location = null;
-        if (cursor != null) {
-            cursor.moveToFirst();
-            location = LocationDao.cursorToLocation(cursor);
-        }
-
-        return location;
-    }
-
 }

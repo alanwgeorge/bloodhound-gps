@@ -1,20 +1,29 @@
 package com.alangeorge.android.bloodhound;
 
 import android.app.Service;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.alangeorge.android.bloodhound.model.dao.LocationDao;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 
+import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LATITUDE;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LONGITUDE;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
 
 /**
  * Below are example commands to access the database of a device with BloodHound installed
@@ -35,13 +44,40 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     private static boolean isRunning = false;
 
     private ScheduledThreadPoolExecutor threadPool = new ScheduledThreadPoolExecutor(1, new ServiceThreadFactory());
-    private LocationClient locationClient;
-    private LocationDao locationDao;
+//    private LocationClient locationClient;
+
+    private static final LocationListener locationListener = new LocationListener() {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            Log.d(TAG, "onLocationChanged(" + location + ")");
+            addLocation(location);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.d(TAG, "onStatusChanged(" + provider + ", " + status + ", " + extras + ")");
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.d(TAG, "onProviderChanged(" + provider + ")");
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.d(TAG, "onProviderDisabled(" + provider + ")");
+        }
+    };
 
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate()");
         super.onCreate();
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.removeUpdates(locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, UPDATE_INTERVAL, 0, locationListener);
     }
 
     private void startTimer() {
@@ -60,36 +96,43 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     }
 
     private void onTimerTick() {
-        Location location = locationClient.getLastLocation();
-        Log.d(TAG, "location = " + location);
-        locationDao.create(location.getLatitude(), location.getLongitude());
+//        Location location = locationClient.getLastLocation();
+//        Log.d(TAG, "location = " + location);
+//
+//        addLocation(location);
     }
 
+    private static void addLocation(Location location) {
+        Date now = new Date();
+
+        ContentValues values = new ContentValues();
+        values.put(LOCATIONS_COLUMN_LATITUDE, location.getLatitude());
+        values.put(LOCATIONS_COLUMN_LONGITUDE, location.getLongitude());
+        values.put(LOCATIONS_COLUMN_TIME, now.getTime());
+        values.put(LOCATIONS_COLUMN_TIME_STRING, now.toString());
+
+        App.context.getContentResolver().insert(LocationContentProvider.LOCATIONS_CONTENT_URI, values);
+    }
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind(" + intent + ")");
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand(" + intent + ", " + flags + ", " + startId +")");
-        locationClient = new LocationClient(this, this, this);
-        locationClient.connect();
-        locationDao = new LocationDao(this);
-
-        locationDao.open();
-
-        startTimer();
+//        locationClient = new LocationClient(this, this, this);
+//        locationClient.connect();
+//
+//        startTimer();
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy()");
-        locationClient.disconnect();
-        locationDao.close();
+//        locationClient.disconnect();
         super.onDestroy();
     }
 
