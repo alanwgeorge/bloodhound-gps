@@ -30,6 +30,7 @@ public class LocationDiffCursorAdaptor extends SimpleCursorAdapter {
         // here we set a convenience data object on the view for easy access to data about this LocationDiff item
         result.setTag(R.id.location_diff_view_tag, LocationDiffDao.cursorToLocationDiff(getCursor()));
 
+        // after getting the populated view from super, we calculate as set the distance textview
         if (result.getId() == R.id.diff_list_item) {
             TextView distanceTextView;
             float distance;
@@ -41,6 +42,7 @@ public class LocationDiffCursorAdaptor extends SimpleCursorAdapter {
             latitude2 =  Double.parseDouble(((TextView) result.findViewById(R.id.latitude2TextView)).getText().toString());
             longitude2 =  Double.parseDouble(((TextView) result.findViewById(R.id.longitude2TextView)).getText().toString());
 
+            // calculate the distance in meters
             Location loc1 = new Location("internal");
             Location loc2 = new Location("internal");
             loc1.setLatitude(latitude1);
