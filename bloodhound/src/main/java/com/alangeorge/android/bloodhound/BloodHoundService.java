@@ -37,10 +37,11 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     private static final String TAG = "BloodHoundService";
 
     private static final long UPDATE_INTERVAL = 60000L;
-    @SuppressWarnings("UnusedDeclaration")
+
     public static final String BLOODHOUND_SERVICE_ACTION = "com.alangeorge.android.bloodhound.BloodHoundService";
 
     private static boolean isRunning = false;
+    private static Date lastUpdate;
 
     private ScheduledThreadPoolExecutor threadPool = new ScheduledThreadPoolExecutor(1, new ServiceThreadFactory());
 //    private LocationClient locationClient;
@@ -51,6 +52,7 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
         public void onLocationChanged(Location location) {
             Log.d(TAG, "onLocationChanged(" + location + ")");
             addLocation(location);
+            lastUpdate = new Date();
         }
 
         @Override
@@ -99,6 +101,7 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
 //        Log.d(TAG, "location = " + location);
 //
 //        addLocation(location);
+        Log.d(TAG, "lastUpdate: " + lastUpdate.toString());
     }
 
     private static void addLocation(Location location) {
@@ -124,7 +127,7 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
 //        locationClient = new LocationClient(this, this, this);
 //        locationClient.connect();
 //
-//        startTimer();
+        startTimer();
         return START_STICKY;
     }
 

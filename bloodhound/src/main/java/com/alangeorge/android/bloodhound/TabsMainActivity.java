@@ -118,9 +118,7 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
                 throw new IllegalArgumentException("onNavigationItemSelected(" + itemPosition + "): invalid selection");
         }
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, destination)
-                .commit();
+        getFragmentManager().beginTransaction().replace(R.id.container, destination).commit();
 
         return true;
     }
