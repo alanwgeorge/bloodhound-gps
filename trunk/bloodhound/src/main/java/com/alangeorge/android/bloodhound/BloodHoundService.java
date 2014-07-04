@@ -12,9 +12,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +30,7 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COL
  * sqlite> select * from locations;
  */
 @SuppressWarnings("WeakerAccess")
-public class BloodHoundService extends Service implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
+public class BloodHoundService extends Service {
     private static final String TAG = "BloodHoundService";
 
     private static final long UPDATE_INTERVAL = 60000L;
@@ -78,7 +75,8 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
         super.onCreate();
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.removeUpdates(locationListener);
+        locationManager.removeUpdates(locationListener); // ensure we only register one listener
+        // TODO use locationManager.getBestProvider() versus just network provider
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, UPDATE_INTERVAL, MIN_CHANGE_TO_REPORT, locationListener);
     }
 
@@ -98,9 +96,11 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
     }
 
     private void onTimerTick() {
+        // historically we fetched the current location here with Google Play Services, but now we are using a LocationListener that calls back when location changes
+        // now we are logging the age of the last update to track that we are getting timely location updates.
+        // perhaps we could alert or re-register our LocationListener if the last update reaches a certain age.
         Log.d(TAG, "lastUpdate: " + lastUpdate.toString());
         Log.d(TAG, "now: " + new Date().toString());
-
     }
 
     private static void addLocation(Location location) {
@@ -168,21 +168,4 @@ public class BloodHoundService extends Service implements GooglePlayServicesClie
         Log.d(TAG, "onTaskRemoved(" + rootIntent + ")");
         super.onTaskRemoved(rootIntent);
     }
-
-    // start Google Play connection callbacks
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(TAG, "Google Play Services onConnect()");
-    }
-
-    @Override
-    public void onDisconnected() {
-        Log.d(TAG, "Google Play Services onDisconnect()");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Google Play Services onConnectionFailed(" +connectionResult  + ")");
-    }
-    // end Google Play connection callbacks
 }
