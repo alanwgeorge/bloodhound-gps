@@ -54,6 +54,9 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
                 ),
                 this
         );
+
+        // start location recording
+        sendBroadcast(new Intent(BLOODHOUND_RECEIVER_ACTION));
     }
 
     @Override
@@ -102,7 +105,7 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
 
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-        Fragment destination = null;
+        Fragment destination;
 
         switch (itemPosition) {
             case 0:
