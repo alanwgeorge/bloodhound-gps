@@ -8,10 +8,14 @@ import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.alangeorge.android.bloodhound.model.dao.LocationDiffDao;
+import com.alangeorge.android.bloodhound.model.dao.DBHelper;
 
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * For our location diff layout we need to calculate the distance between the start and end points.  This is done by
+ * overriding the {@link com.alangeorge.android.bloodhound.LocationDiffCursorAdaptor#getView(int, android.view.View, android.view.ViewGroup)} method.
+ */
 public class LocationDiffCursorAdaptor extends SimpleCursorAdapter {
     @SuppressWarnings("UnusedDeclaration")
     private static final String TAG = "LocationDiffCursorAdaptor";
@@ -20,6 +24,20 @@ public class LocationDiffCursorAdaptor extends SimpleCursorAdapter {
         super(context, layout, c, from, to, flags);
     }
 
+    /**
+     * For our location diff layout we need to calculate the distance between the start and end points.  The distance
+     * is calculated by first getting the view from super and then using the points on the view to calculate the distance
+     * in meters.  Then we set the distance value on the layout.
+     * <p/>
+     * We also set a {@link com.alangeorge.android.bloodhound.model.LocationDiff} as a {@link android.view.View#setTag(int, Object)}
+     * on the View we return.  This allows us access to the model object form the {@link com.alangeorge.android.bloodhound.LocationDiffFragment#onListItemClick(android.widget.ListView, android.view.View, int, long)}
+     * in order to have access to the required data to start the {@link com.alangeorge.android.bloodhound.MapDetailActivity} for this LocationDiff.
+     *
+     * @param position current ListView position
+     * @param convertView preserved previous View for reuse if possible
+     * @param parent parent View
+     * @return the full constructed View
+     */
     @Nullable
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -28,9 +46,9 @@ public class LocationDiffCursorAdaptor extends SimpleCursorAdapter {
         result = super.getView(position, convertView, parent);
 
         // here we set a convenience data object on the view for easy access to data about this LocationDiff item
-        result.setTag(R.id.location_diff_view_tag, LocationDiffDao.cursorToLocationDiff(getCursor()));
+        result.setTag(R.id.location_diff_view_tag, DBHelper.cursorToLocationDiff(getCursor()));
 
-        // after getting the populated view from super, we calculate as set the distance textview
+        // after getting the populated view from super, we calculate as set the distance TextView
         if (result.getId() == R.id.diff_list_item) {
             TextView distanceTextView;
             float distance;

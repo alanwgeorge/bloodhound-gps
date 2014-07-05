@@ -22,12 +22,8 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COL
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
 
 /**
- * Below are example commands to access the database of a device with BloodHound installed
- *
- * $ adb -s 10.0.1.28:5555 backup -f data.ab -noapk com.alangeorge.android.bloodhound
- * $ dd if=data.ab bs=1 skip=24 | python -c "import zlib,sys;sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf -
- * $ sqlite3 apps/com.alangeorge.android.bloodhound/db/locations.db
- * sqlite> select * from locations;
+ * This service is responsible for recording the devices location at configurable intervals and minimum
+ * location change.  Currently uses {@link android.location.LocationListener}
  */
 @SuppressWarnings("WeakerAccess")
 public class BloodHoundService extends Service {

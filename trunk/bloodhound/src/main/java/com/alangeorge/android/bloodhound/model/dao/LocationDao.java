@@ -25,8 +25,10 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COL
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
 
-
-@SuppressWarnings("WeakerAccess")
+/**
+ * @deprecated Use {@link com.alangeorge.android.bloodhound.LocationContentProvider}
+ */
+@SuppressWarnings({"WeakerAccess", "UnusedDeclaration"})
 public class LocationDao {
     private static final String TAG = "LocationDao";
 
@@ -62,7 +64,7 @@ public class LocationDao {
 
         Cursor cursor = database.query(TABLE_LOCATIONS, LOCATIONS_ALL_COLUMNS, LOCATIONS_COLUMN_ID + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
-        Location newLocation = cursorToLocation(cursor);
+        Location newLocation = DBHelper.cursorToLocation(cursor);
         cursor.close();
 
         context.getContentResolver().notifyChange(LocationContentProvider.LOCATIONS_CONTENT_URI, null);
@@ -71,17 +73,6 @@ public class LocationDao {
         Log.d(TAG, "new location = " + newLocation);
 
         return newLocation;
-    }
-
-    public static Location cursorToLocation(Cursor cursor) {
-        Location location = new Location();
-
-        location.setId(cursor.getLong(0));
-        location.setLatitude(cursor.getFloat(1));
-        location.setLongitude(cursor.getFloat(2));
-        location.setTime(new Date(cursor.getLong(3)));
-
-        return location;
     }
 
     private class LocationContentObserver extends ContentObserver {

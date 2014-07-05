@@ -1,10 +1,30 @@
 package com.alangeorge.android.bloodhound.model.dao;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.alangeorge.android.bloodhound.model.Location;
+import com.alangeorge.android.bloodhound.model.LocationDiff;
+
+import java.util.Date;
+
+/**
+ * SQLiteOpenHelper for our Locations and LocationDiff schema.
+ *  <p>
+ * Below are example commands (OSX) to access the database of a device with BloodHound installed
+ * <p>
+ * <pre>
+ * {@code
+ * $ adb -s 10.0.1.28:5555 backup -f data.ab -noapk com.alangeorge.android.bloodhound
+ * $ dd if=data.ab bs=1 skip=24 | python -c "import zlib,sys;sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf -
+ * $ sqlite3 apps/com.alangeorge.android.bloodhound/db/locations.db
+ * sqlite> select * from locations;
+ * }
+ * </pre>
+ */
 public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     private static final String DATABASE_NAME = "locations.db";
@@ -26,6 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
             LOCATIONS_COLUMN_TIME_STRING
     };
 
+    @SuppressWarnings("UnusedDeclaration")
     public static final String LOCATIONS_DATABASE_CREATE = "create table " + TABLE_LOCATIONS + " (" + LOCATIONS_COLUMN_ID
             + " integer primary key autoincrement, " + LOCATIONS_COLUMN_LATITUDE + " real not null, " + LOCATIONS_COLUMN_LONGITUDE
             + " real not null, " + LOCATIONS_COLUMN_TIME + " integer not null, " + LOCATIONS_COLUMN_TIME_STRING + " text not null);";
@@ -66,11 +87,43 @@ public class DBHelper extends SQLiteOpenHelper {
             ", l2.time as " + LOCATIONS_DIFF_COLUMN_TIME2 + " from " + TABLE_LOCATIONS + " l1, " + TABLE_LOCATIONS + " l2 where l1.rowid = l2.rowid-1 order by l1.time";
 
 
-    private Context context;
-
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
+    }
+
+    public static Location cursorToLocation(Cursor cursor) {
+        Location location = new Location();
+
+        location.setId(cursor.getLong(0));
+        location.setLatitude(cursor.getFloat(1));
+        location.setLongitude(cursor.getFloat(2));
+        location.setTime(new Date(cursor.getLong(3)));
+
+        return location;
+    }
+
+    public static LocationDiff cursorToLocationDiff(Cursor cursor) {
+        LocationDiff locationDiff = new LocationDiff();
+
+        Location fromLocation = new Location();
+        Location toLocation = new Location();
+
+        locationDiff.setId(cursor.getLong(0));
+        fromLocation.setId(cursor.getLong(1));
+        fromLocation.setLatitude(cursor.getFloat(2));
+        fromLocation.setLongitude(cursor.getFloat(3));
+        fromLocation.setTime(new Date(cursor.getLong(4)));
+        locationDiff.setLatitudeDiff(cursor.getFloat(5));
+        locationDiff.setLongitudeDiff(cursor.getFloat(6));
+        toLocation.setId(cursor.getLong(7));
+        toLocation.setLatitude(cursor.getFloat(8));
+        toLocation.setLongitude(cursor.getFloat(9));
+        toLocation.setTime(new Date(cursor.getLong(10)));
+
+        locationDiff.setFromLocation(fromLocation);
+        locationDiff.setToLocation(toLocation);
+
+        return locationDiff;
     }
 
     @Override
