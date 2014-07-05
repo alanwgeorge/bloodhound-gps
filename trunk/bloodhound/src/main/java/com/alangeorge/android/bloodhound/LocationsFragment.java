@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import static com.alangeorge.android.bloodhound.LocationContentProvider.LOCATIONS_CONTENT_URI;
+import static com.alangeorge.android.bloodhound.model.provider.LocationContentProvider.LOCATIONS_CONTENT_URI;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_ACTION;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_START;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.MAP_ACTION_LOCATION;

@@ -56,7 +56,7 @@ public class Location {
     }
 
     /**
-     * Creates a {@link com.alangeorge.android.bloodhound.model.Location} for the given {@link com.alangeorge.android.bloodhound.LocationContentProvider} {@link android.net.Uri}
+     * Creates a {@link com.alangeorge.android.bloodhound.model.Location} for the given {@link com.alangeorge.android.bloodhound.model.provider.LocationContentProvider} {@link android.net.Uri}
      *
      *
      * @param locationUri Uri of the recorded location to retrieve

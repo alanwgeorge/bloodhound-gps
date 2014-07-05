@@ -16,6 +16,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.alangeorge.android.bloodhound.model.LocationDiff;
+import com.alangeorge.android.bloodhound.model.provider.LocationContentProvider;
 
 import org.jetbrains.annotations.NotNull;
 

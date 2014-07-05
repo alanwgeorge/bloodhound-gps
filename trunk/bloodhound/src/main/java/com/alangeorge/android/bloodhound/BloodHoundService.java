@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.alangeorge.android.bloodhound.model.provider.LocationContentProvider;
+
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;

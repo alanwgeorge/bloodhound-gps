@@ -12,7 +12,8 @@ import com.alangeorge.android.bloodhound.model.LocationDiff;
 import java.util.Date;
 
 /**
- * SQLiteOpenHelper for our Locations and LocationDiff schema.
+ * {@link android.database.sqlite.SQLiteOpenHelper} for our {@link com.alangeorge.android.bloodhound.model.Location} table
+ * and {@link com.alangeorge.android.bloodhound.model.LocationDiff} view.
  *  <p>
  * Below are example commands (OSX) to access the database of a device with BloodHound installed
  * <p>
@@ -22,6 +23,7 @@ import java.util.Date;
  * $ dd if=data.ab bs=1 skip=24 | python -c "import zlib,sys;sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf -
  * $ sqlite3 apps/com.alangeorge.android.bloodhound/db/locations.db
  * sqlite> select * from locations;
+ * sqlite> select * from locations_diff;
  * }
  * </pre>
  */
@@ -37,7 +39,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String LOCATIONS_COLUMN_LONGITUDE = "longitude";
     public static final String LOCATIONS_COLUMN_TIME = "time";
     public static final String LOCATIONS_COLUMN_TIME_STRING = "time_str";
-    @SuppressWarnings("WeakerAccess")
+
     public static final String[] LOCATIONS_ALL_COLUMNS = {
             LOCATIONS_COLUMN_ID,
             LOCATIONS_COLUMN_LATITUDE,
@@ -65,7 +67,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String LOCATIONS_DIFF_COLUMN_LONGITUDE2 = "longitude2";
     public static final String LOCATIONS_DIFF_COLUMN_TIME2 = "time2";
 
-    @SuppressWarnings("WeakerAccess")
     public static final String[] LOCATIONS_DIFF_ALL_COLUMNS = {
             LOCATIONS_DIFF_COLUMN_ID,
             LOCATIONS_DIFF_COLUMN_ID1,
@@ -91,6 +92,12 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    /**
+     * Takes a {@link android.database.Cursor} and converts it to a model object, {@link com.alangeorge.android.bloodhound.model.Location}
+     *
+     * @param cursor the {@link android.database.Cursor} to convert
+     * @return the resulting {@link com.alangeorge.android.bloodhound.model.Location}
+     */
     public static Location cursorToLocation(Cursor cursor) {
         Location location = new Location();
 
@@ -102,6 +109,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return location;
     }
 
+    /**
+     * Takes a {@link android.database.Cursor} and converts it to a model object, {@link com.alangeorge.android.bloodhound.model.LocationDiff}
+     *
+     * @param cursor the {@link android.database.Cursor} to convert
+     * @return the resulting {@link com.alangeorge.android.bloodhound.model.LocationDiff}
+     */
     public static LocationDiff cursorToLocationDiff(Cursor cursor) {
         LocationDiff locationDiff = new LocationDiff();
 
