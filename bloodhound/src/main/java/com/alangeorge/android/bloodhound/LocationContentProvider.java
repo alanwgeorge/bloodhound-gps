@@ -1,7 +1,6 @@
 package com.alangeorge.android.bloodhound;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -22,6 +21,9 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIF
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_LOCATIONS;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_LOCATIONS_DIFF;
 
+/**
+ * Our ContentProvider implementation for the locations SQLite table and locations_diff view.
+ */
 @SuppressWarnings("WeakerAccess")
 public class LocationContentProvider extends ContentProvider {
     private static final String TAG = "LocationContentProvider";
@@ -38,12 +40,6 @@ public class LocationContentProvider extends ContentProvider {
 
     public static final Uri LOCATIONS_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + LOCATIONS_PATH);
     public static final Uri LOCATIONS_DIFF_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + LOCATIONS_DIFF_PATH);
-//    @SuppressWarnings("UnusedDeclaration")
-//    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/locations";
-    @SuppressWarnings("UnusedDeclaration")
-    public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/location";
-    @SuppressWarnings("UnusedDeclaration")
-    public static final String CONTENT_DIFF_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/locations_diff";
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -117,7 +113,6 @@ public class LocationContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,  String[] selectionArgs, String sortOrder) {
-        // Using SQLiteQueryBuilder instead of query() method
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         Cursor cursor;
         SQLiteDatabase db;
@@ -172,7 +167,7 @@ public class LocationContentProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-
+        // make sure that potential listeners are getting notified
         //noinspection ConstantConditions
         getContext().getContentResolver().notifyChange(uri, null);
 
@@ -180,14 +175,6 @@ public class LocationContentProvider extends ContentProvider {
     }
 
     private void checkColumnsLocations(String[] projection) {
-//        String[] available = {
-//                LocationDao.LOCATIONS_COLUMN_LATITUDE,
-//                LocationDao.LOCATIONS_COLUMN_LONGITUDE,
-//                LocationDao.LOCATIONS_COLUMN_TIME,
-//                LocationDao.LOCATIONS_COLUMN_TIME_STRING,
-//                LocationDao.LOCATIONS_COLUMN_ID
-//        };
-
         if (projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
             HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(LOCATIONS_ALL_COLUMNS));

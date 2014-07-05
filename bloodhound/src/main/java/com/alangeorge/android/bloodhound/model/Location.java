@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.alangeorge.android.bloodhound.App;
-import com.alangeorge.android.bloodhound.model.dao.LocationDao;
+import com.alangeorge.android.bloodhound.model.dao.DBHelper;
 
 import java.util.Date;
 
@@ -66,7 +66,7 @@ public class Location {
         Location location = null;
         if (cursor != null) {
             cursor.moveToFirst();
-            location = LocationDao.cursorToLocation(cursor);
+            location = DBHelper.cursorToLocation(cursor);
         }
 
         return location;

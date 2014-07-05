@@ -1,6 +1,5 @@
 package com.alangeorge.android.bloodhound;
 
-import android.app.ListActivity;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -10,8 +9,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -20,10 +17,11 @@ import android.widget.TextView;
 
 import com.alangeorge.android.bloodhound.model.LocationDiff;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DateFormat;
 import java.util.Date;
 
-import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_ACTION;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_END;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_START;
@@ -37,20 +35,32 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIF
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LONGITUDE_DIFF;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_TIME2;
 
-
-@SuppressWarnings("WeakerAccess")
+/**
+ * This fragment represents a ListView of differences between subsequent recorded locations.
+ * The list is backed by a CursorAdaptor which in turn is feed by the LocationsContentProvider
+ * which is a wrapper around a SQLite view.
+ */
 public class LocationDiffFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "LocationDiffFragment";
 
     private LocationDiffCursorAdaptor adapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_main, container, false);
         fillData();
         return rootView;
     }
 
+    /**
+     * Call back to ListItem clicks.  Here we start a {@link com.alangeorge.android.bloodhound.MapDetailActivity} for the clicked item.
+     * <p/>
+     * Please note this depends on the {@link com.alangeorge.android.bloodhound.model.LocationDiff} set on the passed in View using {@link View#setTag(int, Object)}.
+     * @param listView the clicked on ListView
+     * @param view the clicked on item's View
+     * @param position clicked item's position in the ListView
+     * @param id clicked item's unique ID
+     */
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         Log.d(TAG, "onListItemClick(" + position + ")");

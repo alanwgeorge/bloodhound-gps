@@ -25,8 +25,9 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COL
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
 
 /**
-* Created by ageo on 6/29/14.
-*/
+ * This fragment represents a ListView of recorded locations.  The list is backed by a CursorAdaptor
+ * which in turn is feed by the LocationsContentProvider which is a wrapper for an SQLite schema
+ */
 public class LocationsFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "LocationsFragment";
 
@@ -63,7 +64,13 @@ public class LocationsFragment extends ListFragment implements LoaderManager.Loa
                 LOCATIONS_COLUMN_TIME
         };
 
-        return new CursorLoader(getActivity(), LOCATIONS_CONTENT_URI, projection, null, null, LOCATIONS_COLUMN_TIME + " desc");
+        return new CursorLoader(
+                getActivity(),
+                LOCATIONS_CONTENT_URI,
+                projection,
+                null,
+                null,
+                LOCATIONS_COLUMN_TIME + " desc");
     }
 
     @Override
