@@ -14,6 +14,9 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COL
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
 
+/**
+ * Model object representing a recorded location.
+ */
 public class Location {
     private long id;
     private float latitude;
@@ -52,6 +55,13 @@ public class Location {
         this.time = time;
     }
 
+    /**
+     * Creates a {@link com.alangeorge.android.bloodhound.model.Location} for the given {@link com.alangeorge.android.bloodhound.LocationContentProvider} {@link android.net.Uri}
+     *
+     *
+     * @param locationUri Uri of the recorded location to retrieve
+     * @return location translated in to a model object
+     */
     public static Location resolveLocation(Uri locationUri) {
         String[] projection = {
                 LOCATIONS_COLUMN_ID,

@@ -1,8 +1,11 @@
 package com.alangeorge.android.bloodhound.model;
 
+/**
+ * Model Object representing a to and from {@link com.alangeorge.android.bloodhound.model.Location} difference.
+ * Could be used to calculate target path.
+ */
 public class LocationDiff {
     private long id;
-
 
     private Location fromLocation;
     private Location toLocation;
