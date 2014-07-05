@@ -1,4 +1,4 @@
-package com.alangeorge.android.bloodhound;
+package com.alangeorge.android.bloodhound.model.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -22,7 +22,7 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_LOCATIO
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_LOCATIONS_DIFF;
 
 /**
- * Our ContentProvider implementation for the locations SQLite table and locations_diff view.
+ * {@link android.content.ContentProvider} implementation for the SQLite locations table and locations_diff view.
  */
 @SuppressWarnings("WeakerAccess")
 public class LocationContentProvider extends ContentProvider {
@@ -106,7 +106,8 @@ public class LocationContentProvider extends ContentProvider {
         }
 
         //noinspection ConstantConditions
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(LOCATIONS_CONTENT_URI, null);
+        getContext().getContentResolver().notifyChange(LOCATIONS_DIFF_CONTENT_URI, null);
 
         return Uri.parse(LOCATIONS_PATH + "/" + id);
     }
@@ -169,7 +170,8 @@ public class LocationContentProvider extends ContentProvider {
         }
         // make sure that potential listeners are getting notified
         //noinspection ConstantConditions
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(LOCATIONS_CONTENT_URI, null);
+        getContext().getContentResolver().notifyChange(LOCATIONS_DIFF_CONTENT_URI, null);
 
         return rowsUpdated;
     }

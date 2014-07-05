@@ -62,7 +62,7 @@
         </receiver>
 
         <provider
-            android:name=".LocationContentProvider"
+            android:name=".model.provider.LocationContentProvider"
             android:authorities="com.alangeorge.android.bloodhound.locations.contentprovider"
             android:enabled="true"
             android:exported="false" >
