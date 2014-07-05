@@ -37,6 +37,7 @@ android.applicationVariants.all { variant ->
         options.links("http://docs.oracle.com/javase/7/docs/api/");
         options.links("http://d.android.com/reference/");
         options.linksOffline("http://d.android.com/reference/", "file:/Applications/Android Studio.app/sdk/docs/reference");
+        options.memberLevel = JavadocMemberLevel.PRIVATE;
         exclude '**/BuildConfig.java'
         exclude '**/R.java'
     }

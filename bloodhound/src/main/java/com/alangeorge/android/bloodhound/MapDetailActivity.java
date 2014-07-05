@@ -16,6 +16,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+/**
+ * This {@link android.app.Activity} handles all mapping views for the app.
+ * <p/>
+ * Which is currently:
+ * <ul>
+ *     <li>Single recorded {@link com.alangeorge.android.bloodhound.model.Location}, {@link com.alangeorge.android.bloodhound.MapDetailActivity#MAP_ACTION_LOCATION}</li>
+ *     <li>A location diff {@link com.alangeorge.android.bloodhound.model.LocationDiff}, {@link com.alangeorge.android.bloodhound.MapDetailActivity#MAP_ACTION_LOCATION_DIFF}</li>
+ * </ul>
+ *
+ * In the future will support registering a GeoFence {@link com.alangeorge.android.bloodhound.MapDetailActivity#MAP_ACTION_GEOFENCE_SELECT}
+ */
 public class MapDetailActivity extends Activity {
     @SuppressWarnings("UnusedDeclaration")
     private static final String TAG = "MapDetailActivity";
@@ -27,6 +38,24 @@ public class MapDetailActivity extends Activity {
     public static final String EXTRA_START = "map_action_extra_start";
     public static final String EXTRA_END = "map_action_extra_end";
 
+    /**
+     * Selects map behavior based on {@link android.content.Intent#getExtras()} of {@link com.alangeorge.android.bloodhound.MapDetailActivity#EXTRA_ACTION}
+     * <p/>
+     * Other {@link android.content.Intent#getExtras()}:
+     * <p/>
+     * For {@link com.alangeorge.android.bloodhound.MapDetailActivity#MAP_ACTION_LOCATION}, recorded locations
+     * <ul>
+     *     <li>Extra: {@link com.alangeorge.android.bloodhound.MapDetailActivity#EXTRA_START}: the location to display</li>
+     * </ul>
+     * <p/>
+     * For {@link com.alangeorge.android.bloodhound.MapDetailActivity#MAP_ACTION_LOCATION_DIFF}, location changes
+     * <ul>
+     *     <li>Extra: {@link com.alangeorge.android.bloodhound.MapDetailActivity#EXTRA_START}: the starting location to display</li>
+     *     <li>Extra: {@link com.alangeorge.android.bloodhound.MapDetailActivity#EXTRA_END}: the ending location to display</li>
+     * </ul>
+     *
+     * @param savedInstanceState saved state if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +88,12 @@ public class MapDetailActivity extends Activity {
         }
     }
 
+    /**
+     * Maps the Home (android.R.id.home) selection to ending this {@link android.app.Activity}
+     *
+     * @param item menu item selected
+     * @return where the menu selection was handled or not
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -70,6 +105,12 @@ public class MapDetailActivity extends Activity {
         }
     }
 
+    /**
+     * Implements {@link com.alangeorge.android.bloodhound.MapDetailActivity#MAP_ACTION_LOCATION} to display a single
+     * recorded location.
+     *
+     * @param startLocationId the point to display
+     */
     private void showSinglePoint(long startLocationId) {
         Uri locationUri = Uri.parse(LocationContentProvider.LOCATIONS_CONTENT_URI + "/" + startLocationId);
 
@@ -88,6 +129,14 @@ public class MapDetailActivity extends Activity {
         // Zoom in, animating the camera.
         map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
     }
+
+    /**
+     * Implements {@link com.alangeorge.android.bloodhound.MapDetailActivity#MAP_ACTION_LOCATION_DIFF} to display a start and
+     * end points of subsequently recorded locations.
+     *
+     * @param startLocationId the starting point to display
+     * @param endLocationId the end point to display
+     * */
 
     private void showStartEndPoints(long startLocationId, long endLocationId) {
         Uri startLocationUri = Uri.parse(LocationContentProvider.LOCATIONS_CONTENT_URI + "/" + startLocationId);
