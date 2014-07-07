@@ -30,7 +30,8 @@ public class LocationDiffCursorAdaptor extends SimpleCursorAdapter {
      * in meters.  Then we set the distance value on the layout.
      * <p/>
      * We also set a {@link com.alangeorge.android.bloodhound.model.LocationDiff} as a {@link android.view.View#setTag(int, Object)}
-     * on the View we return.  This allows us access to the model object form the {@link com.alangeorge.android.bloodhound.LocationDiffFragment#onListItemClick(android.widget.ListView, android.view.View, int, long)}
+     * on the View we return.  This allows us access to the model object form the {
+     * @link com.alangeorge.android.bloodhound.LocationDiffFragment#onListItemClick(android.widget.ListView, android.view.View, int, long)}
      * in order to have access to the required data to start the {@link com.alangeorge.android.bloodhound.MapDetailActivity} for this LocationDiff.
      *
      * @param position current ListView position

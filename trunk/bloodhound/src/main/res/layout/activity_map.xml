@@ -12,4 +12,27 @@
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.MapFragment" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/diff_map_next_button_label"
+        android:id="@+id/diff_map_next"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        android:onClick="onNextDiffClick"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/diff_map_prev_button_label"
+        android:id="@+id/diff_map_prev"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"
+        android:onClick="onPrevDiffClick"/>
+
 </RelativeLayout>

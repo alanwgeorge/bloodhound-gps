@@ -59,6 +59,7 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
         sendBroadcast(new Intent(BLOODHOUND_RECEIVER_ACTION));
     }
 
+    @SuppressLint("AppCompatMethod")
     @Override
     public void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
         // Restore the previously serialized current dropdown position.
@@ -69,6 +70,7 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
         getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
     }
 
+    @SuppressLint("AppCompatMethod")
     @Override
     public void onSaveInstanceState(@NotNull Bundle outState) {
         // Serialize the current dropdown position.
@@ -123,4 +125,46 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
         return true;
     }
 
+    // logging lifecycle methods
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop()");
+        super.onStop();
+    }
+
+    @Override
+    protected void onPostResume() {
+        Log.d(TAG, "onPostResume()");
+        super.onPostResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy()");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause()");
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume()");
+        super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart()");
+        super.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.d(TAG, "onRestart()");
+        super.onRestart();
+    }
 }

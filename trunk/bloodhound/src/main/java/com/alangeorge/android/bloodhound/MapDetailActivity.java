@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.alangeorge.android.bloodhound.model.Location;
@@ -78,6 +80,13 @@ public class MapDetailActivity extends Activity {
             case MAP_ACTION_LOCATION_DIFF:
                 getActionBar().setTitle(R.string.action_bar_title_location_diff);
                 endLocationId = getIntent().getExtras().getLong(EXTRA_END);
+
+                Button next = (Button) findViewById(R.id.diff_map_next);
+                Button prev = (Button) findViewById(R.id.diff_map_prev);
+
+                next.setVisibility(View.VISIBLE);
+                prev.setVisibility(View.VISIBLE);
+
                 showStartEndPoints(startLocationId, endLocationId);
                 break;
             case MAP_ACTION_GEOFENCE_SELECT:
@@ -164,6 +173,8 @@ public class MapDetailActivity extends Activity {
                 .snippet("End")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
+
+
         // here we set the map to be bounded by our start and end points, we first must
         // let the map layout and then set the bounds, so we do it in the change listener
         map.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
@@ -200,5 +211,11 @@ public class MapDetailActivity extends Activity {
             myLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15));
         }
+    }
+
+    public void onNextDiffClick(View view) {
+    }
+
+    public void onPrevDiffClick(View view) {
     }
 }
