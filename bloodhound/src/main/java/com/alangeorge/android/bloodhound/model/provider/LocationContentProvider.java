@@ -34,10 +34,10 @@ public class LocationContentProvider extends ContentProvider {
     private static final int LOCATION_ID = 20;
     private static final int LOCATIONS_DIFF = 30;
 
-    private static final String AUTHORITY = "com.alangeorge.android.bloodhound.locations.contentprovider";
     private static final String LOCATIONS_PATH = "locations";
     private static final String LOCATIONS_DIFF_PATH = "locations_diff";
 
+    public static final String AUTHORITY = "com.alangeorge.android.bloodhound.locations.contentprovider";
     public static final Uri LOCATIONS_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + LOCATIONS_PATH);
     public static final Uri LOCATIONS_DIFF_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + LOCATIONS_DIFF_PATH);
 

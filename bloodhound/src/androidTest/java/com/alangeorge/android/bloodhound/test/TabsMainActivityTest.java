@@ -22,11 +22,6 @@ public class TabsMainActivityTest extends ActivityInstrumentationTestCase2<TabsM
         Log.d(TAG, "TabsMainActivityTest()");
     }
 
-    public TabsMainActivityTest(Class<TabsMainActivity> activityClass) {
-        super(activityClass);
-        Log.d(TAG, "TabsMainActivityTest(class)");
-    }
-
     @Override
     public void setUp() throws Exception {
         Log.d(TAG, "setUp()");
@@ -71,5 +66,48 @@ public class TabsMainActivityTest extends ActivityInstrumentationTestCase2<TabsM
         assertTrue("fragment == null", fragment != null);
         assertTrue("fragment not LocationsFragment", fragment instanceof LocationsFragment);
 
+    }
+
+    public void testSaveInstance() {
+        Log.d(TAG, "testSaveInstance()");
+
+        getInstrumentation().waitForIdleSync();
+        tabsMainActivity.onNavigationItemSelected(1, 1);
+        getInstrumentation().waitForIdleSync();
+
+        Fragment fragment = tabsMainActivity.getFragmentManager().findFragmentById(R.id.container);
+
+        assertTrue("fragment == null", fragment != null);
+        assertTrue("fragment not LocationDiffFragment", fragment instanceof LocationDiffFragment);
+
+        Log.d(TAG, "calling finish() 1");
+        tabsMainActivity.finish();
+        getInstrumentation().waitForIdleSync();
+        tabsMainActivity = getActivity();
+
+        fragment = tabsMainActivity.getFragmentManager().findFragmentById(R.id.container);
+
+        assertTrue("fragment == null", fragment != null);
+        assertTrue("fragment not LocationDiffFragment", fragment instanceof LocationDiffFragment);
+
+        getInstrumentation().waitForIdleSync();
+        tabsMainActivity.onNavigationItemSelected(0, 0);
+        getInstrumentation().waitForIdleSync();
+
+        Log.d(TAG, "calling finish() 2");
+        tabsMainActivity.finish();
+        getInstrumentation().waitForIdleSync();
+        tabsMainActivity = getActivity();
+
+        fragment = tabsMainActivity.getFragmentManager().findFragmentById(R.id.container);
+
+        assertTrue("fragment == null", fragment != null);
+        assertTrue("fragment not LocationsFragment", fragment instanceof LocationsFragment);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        Log.d(TAG, "tearDown()");
+        super.tearDown();
     }
 }
