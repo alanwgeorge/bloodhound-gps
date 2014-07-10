@@ -35,4 +35,17 @@
         android:visibility="gone"
         android:onClick="onPrevDiffClick"/>
 
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/radiusPicker"
+        android:visibility="gone"
+        android:background="#ffcbcbcb"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:alpha=".75"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
 </RelativeLayout>

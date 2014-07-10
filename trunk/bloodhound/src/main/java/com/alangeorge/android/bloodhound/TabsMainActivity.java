@@ -88,14 +88,8 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_start) {
-            sendBroadcast(new Intent(BLOODHOUND_RECEIVER_ACTION));
-        }
 
         switch (id) {
-            case R.id.action_start:
-                sendBroadcast(new Intent(BLOODHOUND_RECEIVER_ACTION));
-                break;
             case R.id.action_geofence_select:
                 Intent detailIntent = new Intent(this, MapDetailActivity.class);
 

@@ -4,15 +4,12 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.alangeorge.android.bloodhound.App;
-import com.alangeorge.android.bloodhound.model.dao.DBHelper;
 
 import java.util.Date;
 
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_ALL_COLUMNS;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_ID;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LATITUDE;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LONGITUDE;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME;
-import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
+import static com.alangeorge.android.bloodhound.model.provider.LocationContentProvider.LOCATIONS_CONTENT_URI;
 
 /**
  * Model object representing a recorded location.
@@ -22,6 +19,29 @@ public class Location {
     private float latitude;
     private float longitude;
     private Date time;
+
+    public Location() {}
+
+    public Location(long locationId) {
+        Uri locationUri = Uri.parse(LOCATIONS_CONTENT_URI + "/" + locationId);
+
+        Cursor cursor = App.context.getContentResolver().query(
+                locationUri,
+                LOCATIONS_ALL_COLUMNS,
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            setId(cursor.getLong(0));
+            setLatitude(cursor.getFloat(1));
+            setLongitude(cursor.getFloat(2));
+            setTime(new Date(cursor.getLong(3)));
+            cursor.close();
+        }
+    }
 
     public long getId() {
         return id;
@@ -56,32 +76,46 @@ public class Location {
     }
 
     /**
-     * Creates a {@link com.alangeorge.android.bloodhound.model.Location} for the given {@link com.alangeorge.android.bloodhound.model.provider.LocationContentProvider} {@link android.net.Uri}
+     * Retrieves the last (highest _id) location recorded
      *
-     *
-     * @param locationUri Uri of the recorded location to retrieve
      * @return location translated in to a model object
      */
-    public static Location resolveLocation(Uri locationUri) {
-        String[] projection = {
-                LOCATIONS_COLUMN_ID,
-                LOCATIONS_COLUMN_LONGITUDE,
-                LOCATIONS_COLUMN_LATITUDE,
-                LOCATIONS_COLUMN_TIME,
-                LOCATIONS_COLUMN_TIME_STRING
-        };
+    public static Location getLastLocation() {
 
-        Cursor cursor = App.context.getContentResolver().query(locationUri, projection, null, null, null);
+        Cursor cursor = App.context.getContentResolver().query(
+                LOCATIONS_CONTENT_URI,
+                LOCATIONS_ALL_COLUMNS,
+                null,
+                null,
+                LOCATIONS_COLUMN_ID + " desc"
+        );
 
         Location location = null;
         if (cursor != null) {
             cursor.moveToFirst();
-            location = DBHelper.cursorToLocation(cursor);
+            location = cursorToLocation(cursor);
+            cursor.close();
         }
 
         return location;
     }
 
+    /**
+     * Takes a {@link android.database.Cursor} and converts it to a model object, {@link Location}
+     *
+     * @param cursor the {@link android.database.Cursor} to convert
+     * @return the resulting {@link Location}
+     */
+    private static Location cursorToLocation(Cursor cursor) {
+        Location location = new Location();
+
+        location.setId(cursor.getLong(0));
+        location.setLatitude(cursor.getFloat(1));
+        location.setLongitude(cursor.getFloat(2));
+        location.setTime(new Date(cursor.getLong(3)));
+
+        return location;
+    }
     @Override
     public String toString() {
         return "Location{" +

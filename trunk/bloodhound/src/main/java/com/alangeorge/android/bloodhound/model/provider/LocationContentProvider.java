@@ -18,6 +18,7 @@ import java.util.HashSet;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_ALL_COLUMNS;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_ID;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_ALL_COLUMNS;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_ID;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_LOCATIONS;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_LOCATIONS_DIFF;
 
@@ -33,6 +34,7 @@ public class LocationContentProvider extends ContentProvider {
     private static final int LOCATIONS = 10;
     private static final int LOCATION_ID = 20;
     private static final int LOCATIONS_DIFF = 30;
+    private static final int LOCATIONS_DIFF_ID = 40;
 
     private static final String LOCATIONS_PATH = "locations";
     private static final String LOCATIONS_DIFF_PATH = "locations_diff";
@@ -46,6 +48,7 @@ public class LocationContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, LOCATIONS_PATH, LOCATIONS);
         sURIMatcher.addURI(AUTHORITY, LOCATIONS_PATH + "/#", LOCATION_ID);
         sURIMatcher.addURI(AUTHORITY, LOCATIONS_DIFF_PATH, LOCATIONS_DIFF);
+        sURIMatcher.addURI(AUTHORITY, LOCATIONS_DIFF_PATH + "/#", LOCATIONS_DIFF_ID);
     }
 
     @Override
@@ -128,6 +131,9 @@ public class LocationContentProvider extends ContentProvider {
                 queryBuilder.setTables(TABLE_LOCATIONS);
                 db = dbHelper.getWritableDatabase();
                 break;
+            case LOCATIONS_DIFF_ID:
+                // adding the ID to the original query
+                queryBuilder.appendWhere(LOCATIONS_DIFF_COLUMN_ID + "=" + uri.getLastPathSegment());
             case LOCATIONS_DIFF:
                 checkColumnsLocationsDiff(projection);
                 queryBuilder.setTables(TABLE_LOCATIONS_DIFF);

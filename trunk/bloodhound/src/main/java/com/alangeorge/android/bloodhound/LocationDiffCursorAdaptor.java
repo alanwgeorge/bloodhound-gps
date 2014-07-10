@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.alangeorge.android.bloodhound.model.dao.DBHelper;
+import com.alangeorge.android.bloodhound.model.LocationDiff;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +47,7 @@ public class LocationDiffCursorAdaptor extends SimpleCursorAdapter {
         result = super.getView(position, convertView, parent);
 
         // here we set a convenience data object on the view for easy access to data about this LocationDiff item
-        result.setTag(R.id.location_diff_view_tag, DBHelper.cursorToLocationDiff(getCursor()));
+        result.setTag(R.id.location_diff_view_tag, LocationDiff.cursorToLocationDiff(getCursor()));
 
         // after getting the populated view from super, we calculate as set the distance TextView
         if (result.getId() == R.id.diff_list_item) {
