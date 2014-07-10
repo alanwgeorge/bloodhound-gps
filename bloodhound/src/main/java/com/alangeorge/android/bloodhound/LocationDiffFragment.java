@@ -24,7 +24,6 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_ACTION;
-import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_END;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_START;
 import static com.alangeorge.android.bloodhound.MapDetailActivity.MAP_ACTION_LOCATION_DIFF;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_ALL_COLUMNS;
@@ -73,7 +72,6 @@ public class LocationDiffFragment extends ListFragment implements LoaderManager.
 
         detailIntent.putExtra(EXTRA_ACTION, MAP_ACTION_LOCATION_DIFF);
         detailIntent.putExtra(EXTRA_START, diffObj.getFromLocation().getId());
-        detailIntent.putExtra(EXTRA_END, diffObj.getToLocation().getId());
         startActivity(detailIntent);
     }
 

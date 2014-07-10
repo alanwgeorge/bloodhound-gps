@@ -1,15 +1,9 @@
 package com.alangeorge.android.bloodhound.model.dao;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import com.alangeorge.android.bloodhound.model.Location;
-import com.alangeorge.android.bloodhound.model.LocationDiff;
-
-import java.util.Date;
 
 /**
  * {@link android.database.sqlite.SQLiteOpenHelper} for our {@link com.alangeorge.android.bloodhound.model.Location} table
@@ -30,7 +24,7 @@ import java.util.Date;
 public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     private static final String DATABASE_NAME = "locations.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
 
     // locations Table
     public static final String TABLE_LOCATIONS = "locations";
@@ -81,7 +75,7 @@ public class DBHelper extends SQLiteOpenHelper {
             LOCATIONS_DIFF_COLUMN_TIME2
     };
 
-    public static final String LOCATIONS_DIFF_DATABASE_CREATE = "create view " + TABLE_LOCATIONS_DIFF + " as select l2._id as " + LOCATIONS_DIFF_COLUMN_ID + ",l1._id as " + LOCATIONS_DIFF_COLUMN_ID1 +
+    public static final String LOCATIONS_DIFF_DATABASE_CREATE = "create view " + TABLE_LOCATIONS_DIFF + " as select l1._id as " + LOCATIONS_DIFF_COLUMN_ID + ",l1._id as " + LOCATIONS_DIFF_COLUMN_ID1 +
             ", l1.latitude as " + LOCATIONS_DIFF_COLUMN_LATITUDE1 + ", l1.longitude as " + LOCATIONS_DIFF_COLUMN_LONGITUDE1 + ", l1.time as " + LOCATIONS_DIFF_COLUMN_TIME1 +
             ", round((l1.latitude - l2.latitude),4) as " + LOCATIONS_DIFF_COLUMN_LATITUDE_DIFF + ", round((l1.longitude - l2.longitude),4) as " +
             LOCATIONS_DIFF_COLUMN_LONGITUDE_DIFF + ", l2._id as " + LOCATIONS_DIFF_COLUMN_ID2 + ", l2.latitude as " + LOCATIONS_DIFF_COLUMN_LATITUDE2 + ", l2.longitude as " + LOCATIONS_DIFF_COLUMN_LONGITUDE2 +
@@ -92,64 +86,17 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    /**
-     * Takes a {@link android.database.Cursor} and converts it to a model object, {@link com.alangeorge.android.bloodhound.model.Location}
-     *
-     * @param cursor the {@link android.database.Cursor} to convert
-     * @return the resulting {@link com.alangeorge.android.bloodhound.model.Location}
-     */
-    public static Location cursorToLocation(Cursor cursor) {
-        Location location = new Location();
-
-        location.setId(cursor.getLong(0));
-        location.setLatitude(cursor.getFloat(1));
-        location.setLongitude(cursor.getFloat(2));
-        location.setTime(new Date(cursor.getLong(3)));
-
-        return location;
-    }
-
-    /**
-     * Takes a {@link android.database.Cursor} and converts it to a model object, {@link com.alangeorge.android.bloodhound.model.LocationDiff}
-     *
-     * @param cursor the {@link android.database.Cursor} to convert
-     * @return the resulting {@link com.alangeorge.android.bloodhound.model.LocationDiff}
-     */
-    public static LocationDiff cursorToLocationDiff(Cursor cursor) {
-        LocationDiff locationDiff = new LocationDiff();
-
-        Location fromLocation = new Location();
-        Location toLocation = new Location();
-
-        locationDiff.setId(cursor.getLong(0));
-        fromLocation.setId(cursor.getLong(1));
-        fromLocation.setLatitude(cursor.getFloat(2));
-        fromLocation.setLongitude(cursor.getFloat(3));
-        fromLocation.setTime(new Date(cursor.getLong(4)));
-        locationDiff.setLatitudeDiff(cursor.getFloat(5));
-        locationDiff.setLongitudeDiff(cursor.getFloat(6));
-        toLocation.setId(cursor.getLong(7));
-        toLocation.setLatitude(cursor.getFloat(8));
-        toLocation.setLongitude(cursor.getFloat(9));
-        toLocation.setTime(new Date(cursor.getLong(10)));
-
-        locationDiff.setFromLocation(fromLocation);
-        locationDiff.setToLocation(toLocation);
-
-        return locationDiff;
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate()");
-        db.execSQL(LOCATIONS_DATABASE_CREATE);
+        //db.execSQL(LOCATIONS_DATABASE_CREATE);
         db.execSQL(LOCATIONS_DIFF_DATABASE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
+        //db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
         db.execSQL("DROP VIEW IF EXISTS " + TABLE_LOCATIONS_DIFF);
         onCreate(db);
     }
