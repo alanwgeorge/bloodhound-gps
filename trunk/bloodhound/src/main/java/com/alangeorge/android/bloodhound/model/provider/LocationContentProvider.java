@@ -15,10 +15,13 @@ import com.alangeorge.android.bloodhound.model.dao.DBHelper;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.GEOFENCES_ALL_COLUMNS;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.GEOFENCES_COLUMN_ID;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_ALL_COLUMNS;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_ID;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_ALL_COLUMNS;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_ID;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_GEOFENSES;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_LOCATIONS;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.TABLE_LOCATIONS_DIFF;
 
@@ -35,13 +38,17 @@ public class LocationContentProvider extends ContentProvider {
     private static final int LOCATION_ID = 20;
     private static final int LOCATIONS_DIFF = 30;
     private static final int LOCATIONS_DIFF_ID = 40;
+    private static final int GEOFENCES = 50;
+    private static final int GEOFENCES_ID = 60;
 
     private static final String LOCATIONS_PATH = "locations";
     private static final String LOCATIONS_DIFF_PATH = "locations_diff";
+    private static final String GEOFENCE_PATH = "geofence";
 
     public static final String AUTHORITY = "com.alangeorge.android.bloodhound.locations.contentprovider";
     public static final Uri LOCATIONS_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + LOCATIONS_PATH);
     public static final Uri LOCATIONS_DIFF_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + LOCATIONS_DIFF_PATH);
+    public static final Uri GEOFENCE_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + GEOFENCE_PATH);
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -49,6 +56,9 @@ public class LocationContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, LOCATIONS_PATH + "/#", LOCATION_ID);
         sURIMatcher.addURI(AUTHORITY, LOCATIONS_DIFF_PATH, LOCATIONS_DIFF);
         sURIMatcher.addURI(AUTHORITY, LOCATIONS_DIFF_PATH + "/#", LOCATIONS_DIFF_ID);
+        sURIMatcher.addURI(AUTHORITY, GEOFENCE_PATH, GEOFENCES);
+        sURIMatcher.addURI(AUTHORITY, GEOFENCE_PATH + "/#", GEOFENCES_ID);
+
     }
 
     @Override
@@ -103,14 +113,16 @@ public class LocationContentProvider extends ContentProvider {
         switch (uriType) {
             case LOCATIONS:
                 id = sqlDB.insert(TABLE_LOCATIONS, null, values);
+                getContext().getContentResolver().notifyChange(LOCATIONS_CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(LOCATIONS_DIFF_CONTENT_URI, null);
+                break;
+            case GEOFENCES:
+                id = sqlDB.insert(TABLE_GEOFENSES, null, values);
+                getContext().getContentResolver().notifyChange(GEOFENCE_CONTENT_URI, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-
-        //noinspection ConstantConditions
-        getContext().getContentResolver().notifyChange(LOCATIONS_CONTENT_URI, null);
-        getContext().getContentResolver().notifyChange(LOCATIONS_DIFF_CONTENT_URI, null);
 
         return Uri.parse(LOCATIONS_PATH + "/" + id);
     }
@@ -139,17 +151,25 @@ public class LocationContentProvider extends ContentProvider {
                 queryBuilder.setTables(TABLE_LOCATIONS_DIFF);
                 db = dbHelper.getWritableDatabase();
                 break;
+            case GEOFENCES_ID:
+                // adding the ID to the original query
+                queryBuilder.appendWhere(GEOFENCES_COLUMN_ID + "=" + uri.getLastPathSegment());
+            case GEOFENCES:
+                checkColumnsGeoFence(projection);
+                queryBuilder.setTables(TABLE_GEOFENSES);
+                db = dbHelper.getWritableDatabase();
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
 
         cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         // make sure that potential listeners are getting notified
-        //noinspection ConstantConditions
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         return cursor;
     }
+
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
@@ -203,4 +223,16 @@ public class LocationContentProvider extends ContentProvider {
             }
         }
     }
+
+    private void checkColumnsGeoFence(String[] projection) {
+        if (projection != null) {
+            HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
+            HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(GEOFENCES_ALL_COLUMNS));
+            // check if all columns which are requested are available
+            if (!availableColumns.containsAll(requestedColumns)) {
+                throw new IllegalArgumentException("Unknown columns in projection");
+            }
+        }
+    }
+
 }

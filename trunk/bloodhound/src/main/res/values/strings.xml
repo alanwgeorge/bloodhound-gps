@@ -15,5 +15,8 @@
     <string name="action_bar_title_geofence_selection">GEOFence Selection</string>
     <string name="diff_map_next_button_label">Next Diff</string>
     <string name="diff_map_prev_button_label">Prev Diff</string>
+    <string name="title_activity_geo_fence">GeoFenceActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
