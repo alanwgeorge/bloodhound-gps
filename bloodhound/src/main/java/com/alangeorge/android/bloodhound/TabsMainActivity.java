@@ -14,8 +14,6 @@ import android.widget.ArrayAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
-import static com.alangeorge.android.bloodhound.MapDetailActivity.EXTRA_ACTION;
-import static com.alangeorge.android.bloodhound.MapDetailActivity.MAP_ACTION_GEOFENCE_SELECT;
 
 public class TabsMainActivity extends Activity implements ActionBar.OnNavigationListener {
     private static final String TAG = "TabsMainActivity";
@@ -91,9 +89,7 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
 
         switch (id) {
             case R.id.action_geofence_select:
-                Intent detailIntent = new Intent(this, MapDetailActivity.class);
-
-                detailIntent.putExtra(EXTRA_ACTION, MAP_ACTION_GEOFENCE_SELECT);
+                Intent detailIntent = new Intent(this, GeoFenceSelectionActivity.class);
                 startActivity(detailIntent);
         }
         return super.onOptionsItemSelected(item);
