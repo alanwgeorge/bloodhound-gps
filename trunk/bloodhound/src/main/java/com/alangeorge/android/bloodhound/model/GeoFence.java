@@ -12,6 +12,7 @@ import static com.alangeorge.android.bloodhound.model.provider.LocationContentPr
 
 public class GeoFence {
     private long id;
+    private String name;
     private float latitude;
     private float longitude;
     private float radius;
@@ -19,26 +20,17 @@ public class GeoFence {
 
     public GeoFence() {}
 
-    public GeoFence(long id) {
-        Uri locationUri = Uri.parse(GEOFENCE_CONTENT_URI + "/" + id);
+    public GeoFence(long id) throws ModelException {
+        Uri uri = Uri.parse(GEOFENCE_CONTENT_URI + "/" + id);
+        load(uri);
+    }
 
-        Cursor cursor = App.context.getContentResolver().query(
-                locationUri,
-                GEOFENCES_ALL_COLUMNS,
-                null,
-                null,
-                null
-        );
+    public GeoFence(Uri uri) throws ModelException {
+        load(uri);
+    }
 
-        if (cursor != null) {
-            cursor.moveToFirst();
-            setId(cursor.getLong(0));
-            setLatitude(cursor.getFloat(1));
-            setLongitude(cursor.getFloat(2));
-            setRadius(cursor.getFloat(3));
-            setCreateTime(new Date(cursor.getLong(4)));
-            cursor.close();
-        }
+    public GeoFence(Cursor cursor) throws ModelException {
+        load(cursor, false);
     }
 
     public long getId() {
@@ -47,6 +39,14 @@ public class GeoFence {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public float getLatitude() {
@@ -85,10 +85,37 @@ public class GeoFence {
     public String toString() {
         return "GeoFence{" +
                 "id=" + id +
+                ", name='" + name + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", radius=" + radius +
                 ", createTime=" + createTime +
                 '}';
+    }
+
+    private void load(Uri uri) throws ModelException {
+        Cursor cursor = App.context.getContentResolver().query(
+                uri,
+                GEOFENCES_ALL_COLUMNS,
+                null,
+                null,
+                null
+        );
+        cursor.moveToFirst();
+        load(cursor, true);
+    }
+
+    private void load(Cursor cursor, boolean closeCursor) throws ModelException {
+        if (cursor != null && cursor.getCount() > 0) {
+            setId(cursor.getLong(0));
+            setName(cursor.getString(1));
+            setLatitude(cursor.getFloat(2));
+            setLongitude(cursor.getFloat(3));
+            setRadius(cursor.getFloat(4));
+            setCreateTime(new Date(cursor.getLong(5)));
+            if (closeCursor) cursor.close();
+        } else {
+            throw new ModelException("unable to load: cursor null or count is 0");
+        }
     }
 }

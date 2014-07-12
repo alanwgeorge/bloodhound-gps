@@ -13,9 +13,11 @@ import android.util.Log;
 import com.alangeorge.android.bloodhound.model.dao.DBHelper;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.GEOFENCES_ALL_COLUMNS;
+import static com.alangeorge.android.bloodhound.model.dao.DBHelper.GEOFENCES_COLUMN_CREATE_TIME;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.GEOFENCES_COLUMN_ID;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_ALL_COLUMNS;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_ID;
@@ -80,11 +82,19 @@ public class LocationContentProvider extends ContentProvider {
                 rowsDeleted = sqlDB.delete(TABLE_LOCATIONS, selection, selectionArgs);
                 break;
             case LOCATION_ID:
-                String id = uri.getLastPathSegment();
+                String locationId = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsDeleted = sqlDB.delete(TABLE_LOCATIONS, LOCATIONS_COLUMN_ID + "=" + id, null);
+                    rowsDeleted = sqlDB.delete(TABLE_LOCATIONS, LOCATIONS_COLUMN_ID + "=" + locationId, null);
                 } else {
-                    rowsDeleted = sqlDB.delete(TABLE_LOCATIONS, LOCATIONS_COLUMN_ID + "=" + id + " and " + selection, selectionArgs);
+                    rowsDeleted = sqlDB.delete(TABLE_LOCATIONS, LOCATIONS_COLUMN_ID + "=" + locationId + " and " + selection, selectionArgs);
+                }
+                break;
+            case GEOFENCES_ID:
+                String geofenceId = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsDeleted = sqlDB.delete(TABLE_GEOFENSES, GEOFENCES_COLUMN_ID + "=" + geofenceId, null);
+                } else {
+                    rowsDeleted = sqlDB.delete(TABLE_GEOFENSES, GEOFENCES_COLUMN_ID + "=" + geofenceId + " and " + selection, selectionArgs);
                 }
                 break;
             default:
@@ -94,6 +104,7 @@ public class LocationContentProvider extends ContentProvider {
         //noinspection ConstantConditions
         getContext().getContentResolver().notifyChange(LOCATIONS_CONTENT_URI, null);
         getContext().getContentResolver().notifyChange(LOCATIONS_DIFF_CONTENT_URI, null);
+        getContext().getContentResolver().notifyChange(GEOFENCE_CONTENT_URI, null);
 
         return rowsDeleted;
     }
@@ -107,6 +118,7 @@ public class LocationContentProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = dbHelper.getWritableDatabase();
+        Uri result;
 
         long id;
 
@@ -115,16 +127,19 @@ public class LocationContentProvider extends ContentProvider {
                 id = sqlDB.insert(TABLE_LOCATIONS, null, values);
                 getContext().getContentResolver().notifyChange(LOCATIONS_CONTENT_URI, null);
                 getContext().getContentResolver().notifyChange(LOCATIONS_DIFF_CONTENT_URI, null);
+                result = Uri.parse("content://" + AUTHORITY + "/" + LOCATIONS_PATH + "/" + id);
                 break;
             case GEOFENCES:
+                values.put(GEOFENCES_COLUMN_CREATE_TIME, new Date().getTime());
                 id = sqlDB.insert(TABLE_GEOFENSES, null, values);
                 getContext().getContentResolver().notifyChange(GEOFENCE_CONTENT_URI, null);
+                result = Uri.parse("content://" + AUTHORITY + "/" + GEOFENCE_PATH + "/" + id);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
 
-        return Uri.parse(LOCATIONS_PATH + "/" + id);
+        return result;
     }
 
     @Override

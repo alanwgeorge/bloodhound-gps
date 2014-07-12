@@ -18,5 +18,10 @@
     <string name="title_activity_geo_fence">GeoFenceActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_save_geofence">Save</string>
+    <string name="action_discard_geofence">Delete</string>
+    <string name="geofence_load_error">Unable to load geofence</string>
+    <string name="geofence_save_with_no_marker_selected">No marker selected</string>
+    <string name="geofence_delete_with_no_marker_selected">No marker selected</string>
 
 </resources>

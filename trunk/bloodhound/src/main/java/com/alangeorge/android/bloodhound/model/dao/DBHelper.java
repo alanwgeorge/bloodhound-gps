@@ -7,7 +7,7 @@ import android.util.Log;
 
 /**
  * {@link android.database.sqlite.SQLiteOpenHelper} for our {@link com.alangeorge.android.bloodhound.model.Location} table
- * and {@link com.alangeorge.android.bloodhound.model.LocationDiff} view.
+ * {@link com.alangeorge.android.bloodhound.model.LocationDiff} view and {@link com.alangeorge.android.bloodhound.model.GeoFence} table
  *  <p>
  * Below are example commands (OSX) to access the database of a device with BloodHound installed
  * <p>
@@ -18,13 +18,14 @@ import android.util.Log;
  * $ sqlite3 apps/com.alangeorge.android.bloodhound/db/locations.db
  * sqlite> select * from locations;
  * sqlite> select * from locations_diff;
+ * sqlite> select * from geofences;
  * }
  * </pre>
  */
 public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     private static final String DATABASE_NAME = "locations.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     // locations Table
     public static final String TABLE_LOCATIONS = "locations";
@@ -87,6 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
     // geofences table
     public static final String TABLE_GEOFENSES = "geofences";
     public static final String GEOFENCES_COLUMN_ID = "_id";
+    public static final String GEOFENCES_COLUMN_NAME = "name";
     public static final String GEOFENCES_COLUMN_LATITUDE = "latitude";
     public static final String GEOFENCES_COLUMN_LONGITUDE = "longitude";
     public static final String GEOFENCES_COLUMN_RADIUS = "radius";
@@ -94,15 +96,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String[] GEOFENCES_ALL_COLUMNS = {
             GEOFENCES_COLUMN_ID,
+            GEOFENCES_COLUMN_NAME,
             GEOFENCES_COLUMN_LATITUDE,
             GEOFENCES_COLUMN_LONGITUDE,
             GEOFENCES_COLUMN_RADIUS,
             GEOFENCES_COLUMN_CREATE_TIME
     };
 
-    public static final String GEOFENCE__DATABASE_CREATE = "create table " + TABLE_GEOFENSES + " (" + GEOFENCES_COLUMN_ID
-            + " integer primary key autoincrement, " + GEOFENCES_COLUMN_LATITUDE + " real not null, " + GEOFENCES_COLUMN_LONGITUDE
-            + " real not null, " + GEOFENCES_COLUMN_RADIUS + " real not null, " + GEOFENCES_COLUMN_CREATE_TIME + " integer not null);";
+    public static final String GEOFENCE_DATABASE_CREATE = "create table " + TABLE_GEOFENSES + " (" + GEOFENCES_COLUMN_ID
+            + " integer primary key autoincrement, " + GEOFENCES_COLUMN_NAME + " text not null, " + GEOFENCES_COLUMN_LATITUDE
+            + " real not null, " + GEOFENCES_COLUMN_LONGITUDE + " real not null, " + GEOFENCES_COLUMN_RADIUS + " real not null, "
+            + GEOFENCES_COLUMN_CREATE_TIME + " integer not null);";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -111,17 +115,17 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate()");
-        db.execSQL(LOCATIONS_DATABASE_CREATE);
+//        db.execSQL(LOCATIONS_DATABASE_CREATE);
         db.execSQL(LOCATIONS_DIFF_DATABASE_CREATE);
-        db.execSQL(GEOFENCE__DATABASE_CREATE);
+        db.execSQL(GEOFENCE_DATABASE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
         db.execSQL("DROP VIEW IF EXISTS " + TABLE_LOCATIONS_DIFF);
-        db.execSQL("DROP VIEW IF EXISTS " + TABLE_GEOFENSES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GEOFENSES);
         onCreate(db);
     }
 
