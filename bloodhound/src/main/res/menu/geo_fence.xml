@@ -1,8 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.alangeorge.android.bloodhound.GeoFenceSelectionActivity" >
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
+    <item android:id="@+id/action_save"
+          android:icon="@drawable/ic_action_save"
+          android:title="@string/action_save_geofence"
+          android:orderInCategory="100"
+          android:showAsAction="ifRoom"
+          tools:ignore="AppCompatResource"/>
+    <item android:id="@+id/action_discard"
+          android:icon="@drawable/ic_action_discard"
+          android:title="@string/action_discard_geofence"
+          android:orderInCategory="100"
+          android:showAsAction="ifRoom"
+          tools:ignore="AppCompatResource"/>
+
 </menu>

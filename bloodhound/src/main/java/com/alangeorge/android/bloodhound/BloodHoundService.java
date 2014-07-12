@@ -12,8 +12,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.alangeorge.android.bloodhound.model.provider.LocationContentProvider;
-
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +20,7 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COL
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_LONGITUDE;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_COLUMN_TIME_STRING;
+import static com.alangeorge.android.bloodhound.model.provider.LocationContentProvider.LOCATIONS_CONTENT_URI;
 
 /**
  * This service is responsible for recording the devices location at configurable intervals and minimum
@@ -110,7 +109,7 @@ public class BloodHoundService extends Service {
         values.put(LOCATIONS_COLUMN_TIME, now.getTime());
         values.put(LOCATIONS_COLUMN_TIME_STRING, now.toString());
 
-        App.context.getContentResolver().insert(LocationContentProvider.LOCATIONS_CONTENT_URI, values);
+        App.context.getContentResolver().insert(LOCATIONS_CONTENT_URI, values);
     }
     @Override
     public IBinder onBind(Intent intent) {
