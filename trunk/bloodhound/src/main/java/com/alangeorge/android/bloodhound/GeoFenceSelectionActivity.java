@@ -248,10 +248,11 @@ public class GeoFenceSelectionActivity extends Activity implements
 
 
             final Circle radius = map.addCircle(new CircleOptions()
-                            .center(marker.getPosition())
-                            .radius(Double.valueOf(pickerLabels[DEFAULT_RADIUS_PICKER_INDEX]))
-                            .strokeColor(R.color.DimGray)
-                            .fillColor(R.color.DimGray));
+                    .center(marker.getPosition())
+                    .radius(Double.valueOf(pickerLabels[DEFAULT_RADIUS_PICKER_INDEX]))
+                    .strokeColor(R.color.DimGray)
+                    .fillColor(R.color.DimGray)
+                    .strokeWidth(0));
 
             markerCircleHashMap.put(marker, radius);
             selectMarker(marker);
