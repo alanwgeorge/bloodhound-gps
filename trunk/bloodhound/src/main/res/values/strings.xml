@@ -23,5 +23,7 @@
     <string name="geofence_load_error">Unable to load geofence</string>
     <string name="geofence_save_with_no_marker_selected">No marker selected</string>
     <string name="geofence_delete_with_no_marker_selected">No marker selected</string>
+    <string name="title_section3">GeoFences</string>
+    <string name="error_no_google_maps_available">Google Maps unavailable</string>
 
 </resources>

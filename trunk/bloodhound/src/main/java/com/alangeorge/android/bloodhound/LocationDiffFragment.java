@@ -1,12 +1,12 @@
 package com.alangeorge.android.bloodhound;
 
-import android.app.ListFragment;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +47,7 @@ public class LocationDiffFragment extends ListFragment implements LoaderManager.
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_list_container, container, false);
         fillData();
         return rootView;
     }
