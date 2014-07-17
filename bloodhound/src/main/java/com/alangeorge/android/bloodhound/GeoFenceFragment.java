@@ -1,18 +1,28 @@
 package com.alangeorge.android.bloodhound;
 
-import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.LoaderManager;
 import android.content.ContentValues;
-import android.content.CursorLoader;
-import android.content.Loader;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
@@ -21,7 +31,8 @@ import com.alangeorge.android.bloodhound.model.Location;
 import com.alangeorge.android.bloodhound.model.ModelException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
@@ -41,83 +52,88 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.GEOFENCES_COL
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.GEOFENCES_COLUMN_RADIUS;
 import static com.alangeorge.android.bloodhound.model.provider.LocationContentProvider.GEOFENCE_CONTENT_URI;
 
-public class GeoFenceSelectionActivity extends Activity implements
+
+public class GeoFenceFragment extends Fragment implements
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMarkerDragListener,
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnCameraChangeListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "GeoFenceActivity";
+    private static final String TAG = "GeoFenceFragment";
     private static final int DEFAULT_RADIUS_PICKER_INDEX = 20;
     private static final int NUMBER_OF_PICKER_ITEMS = 50;
 
     private GoogleMap map;
+    private SupportMapFragment mapFragment;
     private NumberPicker radiusInput;
 
     private Marker selectedMarker;
     private Map<Marker, Circle> markerCircleHashMap = new HashMap<Marker, Circle>();
     private Map<Marker, GeoFence> markerGeoFenceMap = new HashMap<Marker, GeoFence>();
 
-    @SuppressLint("AppCompatMethod")
+    public GeoFenceFragment() { }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate()");
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_geo_fence);
+    }
 
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActionBar().setTitle(R.string.action_bar_title_geofence_selection);
-        }
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView()");
+        View view = inflater.inflate(R.layout.fragment_geo_fence, container, false);
 
-        assert getFragmentManager().findFragmentById(R.id.map) != null;
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        radiusInput = (NumberPicker) findViewById(R.id.radiusPicker);
-        unSelectMarker();
+        FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        map.setOnMapClickListener(this);
-        map.setOnMarkerDragListener(this);
-        map.setOnMarkerClickListener(this);
-        map.setOnCameraChangeListener(this);
+        GoogleMapOptions options = new GoogleMapOptions();
+        options.mapType(GoogleMap.MAP_TYPE_NORMAL)
+                .compassEnabled(false)
+                .rotateGesturesEnabled(false)
+                .tiltGesturesEnabled(false);
 
-        map.setMyLocationEnabled(true);
+        mapFragment = SupportMapFragment.newInstance(options);
 
-        LoaderManager.enableDebugLogging(true);
-        getLoaderManager().initLoader(0, null, this);
+        fragmentTransaction.replace(R.id.map, mapFragment);
+        fragmentTransaction.commit();
 
-        Location myLocation = Location.getLastLocation();
-
-        if (myLocation != null) {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), 5));
-            map.animateCamera(CameraUpdateFactory.zoomTo(15), 1000, null);
-        }
-
+        return view;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.geo_fence, menu);
-
-        return true;
+    public void onDestroyView() {
+        Log.d(TAG, "onDestroyView()");
+        super.onDestroyView();
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d(TAG, "onCreateOptionsMenu()");
+        inflater.inflate(R.menu.geo_fence, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        Log.d(TAG, "onPrepareOptionsMenu()");
         //noinspection SimplifiableIfStatement
-        if (selectedMarker == null) {
-            return false;
+        if (selectedMarker == null && menu.hasVisibleItems()) {
+            menu.findItem(R.id.action_discard).setVisible(false);
+            menu.findItem(R.id.action_save).setVisible(false);
+        } else {
+            menu.findItem(R.id.action_save).setVisible(true);
+            menu.findItem(R.id.action_discard).setVisible(true);
         }
 
-        return super.onPrepareOptionsMenu(menu);
+        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
             case R.id.action_discard:
                 deleteSelectedGeoFence();
                 unSelectMarker();
@@ -144,7 +160,7 @@ public class GeoFenceSelectionActivity extends Activity implements
 
             long id = selectedGeoFence.getId();
 
-            if (getContentResolver().delete(Uri.parse(GEOFENCE_CONTENT_URI + "/" + id), null, null) == 1) {
+            if (getActivity().getContentResolver().delete(Uri.parse(GEOFENCE_CONTENT_URI + "/" + id), null, null) == 1) {
                 Log.d(TAG, "GeoFence deleted, id " + id);
             }
 
@@ -152,7 +168,7 @@ public class GeoFenceSelectionActivity extends Activity implements
             markerGeoFenceMap.remove(selectedMarker);
 
         } else {
-            Toast.makeText(getApplicationContext(), getString(R.string.geofence_delete_with_no_marker_selected), Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.geofence_delete_with_no_marker_selected), Toast.LENGTH_LONG).show();
             Log.e(TAG, "geofence_delete_with_no_marker_selected");
         }
     }
@@ -166,11 +182,11 @@ public class GeoFenceSelectionActivity extends Activity implements
             values.put(GEOFENCES_COLUMN_NAME, "GeoFence");
             values.put(GEOFENCES_COLUMN_RADIUS, markerCircleHashMap.get(selectedMarker).getRadius());
 
-            Uri result = getContentResolver().insert(GEOFENCE_CONTENT_URI, values);
+            Uri result = getActivity().getContentResolver().insert(GEOFENCE_CONTENT_URI, values);
 
             return new GeoFence(result);
         } else {
-            Toast.makeText(getApplicationContext(), getString(R.string.geofence_save_with_no_marker_selected), Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.geofence_save_with_no_marker_selected), Toast.LENGTH_LONG).show();
             Log.e(TAG, "geofence_save_with_no_marker_selected");
             return null;
         }
@@ -207,21 +223,20 @@ public class GeoFenceSelectionActivity extends Activity implements
         selectedMarker = marker;
         float maxDistance = calculateMaxDistance(map.getProjection().getVisibleRegion());
 
-        NumberPicker radiusInput = (NumberPicker) findViewById(R.id.radiusPicker);
+        NumberPicker radiusInput = (NumberPicker) getActivity().findViewById(R.id.radiusPicker);
 
         radiusInput.setDisplayedValues(getPickerValues(NUMBER_OF_PICKER_ITEMS, maxDistance));
         radiusInput.setValue(DEFAULT_RADIUS_PICKER_INDEX);
 
         radiusInput.setVisibility(View.VISIBLE);
-        invalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
     }
 
     private void unSelectMarker() {
         radiusInput.setVisibility(View.GONE);
         selectedMarker = null;
-        invalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
     }
-
     // start GoogleMap.OnMapClickListener
     /**
      * If a marker is selected, clicking on the map will deselect it.
@@ -256,7 +271,7 @@ public class GeoFenceSelectionActivity extends Activity implements
 
             markerCircleHashMap.put(marker, radius);
             selectMarker(marker);
-            invalidateOptionsMenu();
+            getActivity().invalidateOptionsMenu();
 
             radiusInput.setMaxValue(pickerLabels.length - 1);
             radiusInput.setMinValue(0);
@@ -297,7 +312,7 @@ public class GeoFenceSelectionActivity extends Activity implements
         float maxDistance = calculateMaxDistance(map.getProjection().getVisibleRegion());
         Log.d(TAG, "onCameraChange(): screen distance top left to bottom right:" + maxDistance);
 
-        NumberPicker radiusInput = (NumberPicker) findViewById(R.id.radiusPicker);
+        NumberPicker radiusInput = (NumberPicker) getActivity().findViewById(R.id.radiusPicker);
 
         if (radiusInput.getVisibility() == View.VISIBLE) {
             radiusInput.setDisplayedValues(getPickerValues(NUMBER_OF_PICKER_ITEMS, maxDistance));
@@ -319,7 +334,7 @@ public class GeoFenceSelectionActivity extends Activity implements
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, "onCreateLoader()");
         return new CursorLoader(
-                this,
+                getActivity(),
                 GEOFENCE_CONTENT_URI,
                 GEOFENCES_ALL_COLUMNS,
                 null,
@@ -341,7 +356,7 @@ public class GeoFenceSelectionActivity extends Activity implements
             try {
                 geoFence = new GeoFence(data);
             } catch (ModelException e) {
-                Toast.makeText(getApplicationContext(), getString(R.string.geofence_load_error), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), getString(R.string.geofence_load_error), Toast.LENGTH_LONG).show();
                 Log.e(TAG, getString(R.string.geofence_load_error) + ": " + e.getLocalizedMessage());
             }
 
@@ -371,4 +386,143 @@ public class GeoFenceSelectionActivity extends Activity implements
         Log.d(TAG, "onLoadReset()");
     }
     // start LoaderManager.LoaderCallbacks
+
+    // start lifecycle logging
+    @Override
+    public void onAttach(Activity activity) {
+        Log.d(TAG, "onAttach()");
+        super.onAttach(activity);
+    }
+
+    @Override
+    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+        Log.d(TAG, "onInflate()");
+        super.onInflate(activity, attrs, savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        Log.d(TAG, "onStart()");
+        super.onStart();
+
+        //noinspection ConstantConditions
+        assert  getView().findViewById(R.id.radiusPicker) != null;
+        radiusInput = (NumberPicker) getView().findViewById(R.id.radiusPicker);
+        unSelectMarker();
+
+        Location myLocation = Location.getLastLocation();
+
+        map = mapFragment.getMap();
+        Log.d(TAG, "map:" + map);
+
+        if (map != null) {
+            map.setOnMapClickListener(this);
+            map.setOnMarkerDragListener(this);
+            map.setOnMarkerClickListener(this);
+            map.setOnCameraChangeListener(this);
+
+            map.setMyLocationEnabled(true);
+
+            if (myLocation != null) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), 5));
+                map.animateCamera(CameraUpdateFactory.zoomTo(15), 1000, null);
+            }
+
+            // onLoadFinished uses map so only load if map != null
+            LoaderManager.enableDebugLogging(true);
+            getLoaderManager().initLoader(0, null, this);
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.error_no_google_maps_available), Toast.LENGTH_LONG).show();
+        }
+
+        LoaderManager.enableDebugLogging(true);
+        getLoaderManager().initLoader(0, null, this);
+
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume()");
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        Log.d(TAG, "onPause()");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(TAG, "onStop()");
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy()");
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyOptionsMenu() {
+        Log.d(TAG, "onDestroyOptionsMenu()");
+        super.onDestroyOptionsMenu();
+    }
+
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+        Log.d(TAG, "onOptionsMenuClosed()");
+        super.onOptionsMenuClosed(menu);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        Log.d(TAG, "onCreateContextMenu()");
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        Log.d(TAG, "onActivityCreated()");
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        Log.d(TAG, "onViewStateRestored()");
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Log.d(TAG, "onConfigurationChanged()");
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState()");
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        Log.d(TAG, "onLowMemory()");
+        super.onLowMemory();
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Log.d(TAG, "onContextItemSelected()");
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public void onDetach() {
+        Log.d(TAG, "onDetach()");
+        super.onDetach();
+    }
+    // end lifecycle logging
 }

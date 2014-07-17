@@ -1,8 +1,7 @@
 package com.alangeorge.android.bloodhound;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +12,7 @@ import com.alangeorge.android.bloodhound.model.Location;
 import com.alangeorge.android.bloodhound.model.LocationDiff;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,7 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
  *     <li>A location diff {@link com.alangeorge.android.bloodhound.model.LocationDiff}, {@link com.alangeorge.android.bloodhound.MapDetailActivity#MAP_ACTION_LOCATION_DIFF}</li>
  * </ul>
  */
-public class MapDetailActivity extends Activity {
+public class MapDetailActivity extends ActionBarActivity {
     private static final String TAG = "MapDetailActivity";
 
     public static final int MAP_ACTION_LOCATION = 1;
@@ -57,14 +56,13 @@ public class MapDetailActivity extends Activity {
      *
      * @param savedInstanceState saved state if any
      */
-    @SuppressLint("AppCompatMethod")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         int action;
@@ -77,12 +75,12 @@ public class MapDetailActivity extends Activity {
 
         switch (action) {
             case MAP_ACTION_LOCATION:
-                getActionBar().setTitle(R.string.action_bar_title_location);
+                getSupportActionBar().setTitle(R.string.action_bar_title_location);
                 currentId = startLocationId;
                 showSinglePoint(startLocationId);
                 break;
             case MAP_ACTION_LOCATION_DIFF:
-                getActionBar().setTitle(R.string.action_bar_title_location_diff);
+                getSupportActionBar().setTitle(R.string.action_bar_title_location_diff);
 
                 Button next = (Button) findViewById(R.id.diff_map_next);
                 Button prev = (Button) findViewById(R.id.diff_map_prev);
@@ -128,8 +126,8 @@ public class MapDetailActivity extends Activity {
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        assert getFragmentManager().findFragmentById(R.id.map) != null;
-        GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        assert getSupportFragmentManager().findFragmentById(R.id.map) != null;
+        GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 
         map.addMarker(new MarkerOptions().position(latLng).title(location.getTime().toString()));
 
@@ -153,8 +151,8 @@ public class MapDetailActivity extends Activity {
         final LatLng startLatLng = new LatLng(locationDiff.getFromLocation().getLatitude(), locationDiff.getFromLocation().getLongitude());
         final LatLng endLatLng = new LatLng(locationDiff.getToLocation().getLatitude(), locationDiff.getToLocation().getLongitude());
 
-        assert getFragmentManager().findFragmentById(R.id.map) != null;
-        final GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        assert getSupportFragmentManager().findFragmentById(R.id.map) != null;
+        final GoogleMap map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 
         map.clear();
 

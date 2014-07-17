@@ -1,6 +1,6 @@
 package com.alangeorge.android.bloodhound.test;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 import android.view.View;
@@ -41,9 +41,9 @@ public class TabsMainActivityTest extends ActivityInstrumentationTestCase2<TabsM
 
         assertTrue(container instanceof FrameLayout);
 
-        tabsMainActivity.getFragmentManager().beginTransaction().replace(R.id.container, new LocationDiffFragment()).commit();
+        tabsMainActivity.getSupportFragmentManager().beginTransaction().replace(R.id.container, new LocationDiffFragment()).commit();
 
-        Fragment fragment = tabsMainActivity.getFragmentManager().findFragmentById(R.id.container);
+        Fragment fragment = tabsMainActivity.getSupportFragmentManager().findFragmentById(R.id.container);
 
         assertTrue("fragment == null", fragment != null);
         assertTrue("fragment not LocationsFragment", fragment instanceof LocationsFragment);
@@ -52,7 +52,7 @@ public class TabsMainActivityTest extends ActivityInstrumentationTestCase2<TabsM
 
         getInstrumentation().waitForIdleSync();
 
-        fragment = tabsMainActivity.getFragmentManager().findFragmentById(R.id.container);
+        fragment = tabsMainActivity.getSupportFragmentManager().findFragmentById(R.id.container);
 
         assertTrue("fragment == null", fragment != null);
         assertTrue("fragment not LocationDiffFragment", fragment instanceof LocationDiffFragment);
@@ -61,7 +61,7 @@ public class TabsMainActivityTest extends ActivityInstrumentationTestCase2<TabsM
 
         getInstrumentation().waitForIdleSync();
 
-        fragment = tabsMainActivity.getFragmentManager().findFragmentById(R.id.container);
+        fragment = tabsMainActivity.getSupportFragmentManager().findFragmentById(R.id.container);
 
         assertTrue("fragment == null", fragment != null);
         assertTrue("fragment not LocationsFragment", fragment instanceof LocationsFragment);
@@ -71,21 +71,20 @@ public class TabsMainActivityTest extends ActivityInstrumentationTestCase2<TabsM
     public void testSaveInstance() {
         Log.d(TAG, "testSaveInstance()");
 
-        getInstrumentation().waitForIdleSync();
         tabsMainActivity.onNavigationItemSelected(1, 1);
         getInstrumentation().waitForIdleSync();
 
-        Fragment fragment = tabsMainActivity.getFragmentManager().findFragmentById(R.id.container);
+        Fragment fragment = tabsMainActivity.getSupportFragmentManager().findFragmentById(R.id.container);
 
         assertTrue("fragment == null", fragment != null);
         assertTrue("fragment not LocationDiffFragment", fragment instanceof LocationDiffFragment);
 
         Log.d(TAG, "calling finish() 1");
         tabsMainActivity.finish();
-        getInstrumentation().waitForIdleSync();
         tabsMainActivity = getActivity();
+        getInstrumentation().waitForIdleSync();
 
-        fragment = tabsMainActivity.getFragmentManager().findFragmentById(R.id.container);
+       fragment = tabsMainActivity.getSupportFragmentManager().findFragmentById(R.id.container);
 
         assertTrue("fragment == null", fragment != null);
         assertTrue("fragment not LocationDiffFragment", fragment instanceof LocationDiffFragment);
@@ -99,7 +98,7 @@ public class TabsMainActivityTest extends ActivityInstrumentationTestCase2<TabsM
         getInstrumentation().waitForIdleSync();
         tabsMainActivity = getActivity();
 
-        fragment = tabsMainActivity.getFragmentManager().findFragmentById(R.id.container);
+        fragment = tabsMainActivity.getSupportFragmentManager().findFragmentById(R.id.container);
 
         assertTrue("fragment == null", fragment != null);
         assertTrue("fragment not LocationsFragment", fragment instanceof LocationsFragment);

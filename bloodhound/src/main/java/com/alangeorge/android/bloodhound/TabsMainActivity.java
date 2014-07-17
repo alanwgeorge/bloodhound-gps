@@ -1,11 +1,11 @@
 package com.alangeorge.android.bloodhound;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
 
-public class TabsMainActivity extends Activity implements ActionBar.OnNavigationListener {
+public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnNavigationListener {
     private static final String TAG = "TabsMainActivity";
 
     /**
@@ -29,11 +29,10 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
         Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.tabs_main);
+        setContentView(R.layout.activity_tabs_main);
 
         // Set up the action bar to show a dropdown list.
-        @SuppressLint("AppCompatMethod")
-        final ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         //noinspection ConstantConditions
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
@@ -48,6 +47,7 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
                         new String[]{
                                 getString(R.string.title_section1),
                                 getString(R.string.title_section2),
+                                getString(R.string.title_section3)
                         }
                 ),
                 this
@@ -64,16 +64,16 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
         if (!savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
             return;
         }
-        //noinspection ConstantConditions
-        getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+
+        getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
     }
 
     @SuppressLint("AppCompatMethod")
     @Override
     public void onSaveInstanceState(@NotNull Bundle outState) {
         // Serialize the current dropdown position.
-        //noinspection ConstantConditions
-        outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar().getSelectedNavigationIndex());
+
+        outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getSupportActionBar().getSelectedNavigationIndex());
     }
 
     @Override
@@ -83,14 +83,15 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
         return true;
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_geofence_select:
-                Intent detailIntent = new Intent(this, GeoFenceSelectionActivity.class);
-                startActivity(detailIntent);
+//            case R.id.action_geofence_select:
+//                Intent detailIntent = new Intent(this, GeoFenceSelectionActivity.class);
+//                startActivity(detailIntent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -106,11 +107,14 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
             case 1:
                 destination = new LocationDiffFragment();
                 break;
+            case 2:
+                destination = new GeoFenceFragment();
+                break;
             default:
                 throw new IllegalArgumentException("onNavigationItemSelected(" + itemPosition + "): invalid selection");
         }
 
-        getFragmentManager().beginTransaction().replace(R.id.container, destination).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, destination).commit();
 
         return true;
     }
@@ -157,4 +161,5 @@ public class TabsMainActivity extends Activity implements ActionBar.OnNavigation
         Log.d(TAG, "onRestart()");
         super.onRestart();
     }
+
 }

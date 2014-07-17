@@ -115,7 +115,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate()");
-//        db.execSQL(LOCATIONS_DATABASE_CREATE);
+        db.execSQL(LOCATIONS_DATABASE_CREATE);
         db.execSQL(LOCATIONS_DIFF_DATABASE_CREATE);
         db.execSQL(GEOFENCE_DATABASE_CREATE);
     }
@@ -123,7 +123,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
         db.execSQL("DROP VIEW IF EXISTS " + TABLE_LOCATIONS_DIFF);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_GEOFENSES);
         onCreate(db);

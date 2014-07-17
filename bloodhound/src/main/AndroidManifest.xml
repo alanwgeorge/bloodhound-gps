@@ -71,10 +71,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBnEHhRxKdHAzxGc62sPCmWisemjGkFI4k" />
 
-        <activity
-            android:name=".GeoFenceSelectionActivity"
-            android:label="@string/title_activity_geo_fence" >
-        </activity>
     </application>
 
 </manifest>
