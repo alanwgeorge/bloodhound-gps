@@ -91,9 +91,12 @@ public class Location {
         );
 
         Location location = null;
-        if (cursor != null) {
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             location = cursorToLocation(cursor);
+        }
+
+        if (cursor != null) {
             cursor.close();
         }
 

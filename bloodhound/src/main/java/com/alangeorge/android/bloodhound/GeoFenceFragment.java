@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.alangeorge.android.bloodhound.model.GeoFence;
 import com.alangeorge.android.bloodhound.model.Location;
 import com.alangeorge.android.bloodhound.model.ModelException;
+import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -358,6 +359,7 @@ public class GeoFenceFragment extends Fragment implements
             } catch (ModelException e) {
                 Toast.makeText(getActivity().getApplicationContext(), getString(R.string.geofence_load_error), Toast.LENGTH_LONG).show();
                 Log.e(TAG, getString(R.string.geofence_load_error) + ": " + e.getLocalizedMessage());
+                continue;
             }
 
             LatLng latLng = new LatLng(data.getFloat(2), data.getFloat(3));
