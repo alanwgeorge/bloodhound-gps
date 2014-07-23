@@ -25,5 +25,6 @@
     <string name="geofence_delete_with_no_marker_selected">No marker selected</string>
     <string name="title_section3">GeoFences</string>
     <string name="error_no_google_maps_available">Google Maps unavailable</string>
-
+    <string name="geofence_transition_notification_text"> Click notification to return to app </string>
+    <string name="geofence_transition_notification_title"> %1$s geofence(s) %2$s </string>
 </resources>
