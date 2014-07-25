@@ -158,14 +158,6 @@ public class BloodHoundService extends Service implements
         if (null != geoFenceTransitionPendingIntent) {
             return geoFenceTransitionPendingIntent;
         } else {
-
-            /*
-             * Return a PendingIntent to start the IntentService.
-             * Always create a PendingIntent sent to Location Services
-             * with FLAG_UPDATE_CURRENT, so that sending the PendingIntent
-             * again updates the original. Otherwise, Location Services
-             * can't match the PendingIntent to requests made with it.
-             */
             return PendingIntent.getService(
                     this,
                     0,
