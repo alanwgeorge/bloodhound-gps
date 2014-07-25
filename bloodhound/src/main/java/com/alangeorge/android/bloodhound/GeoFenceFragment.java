@@ -29,7 +29,6 @@ import android.widget.Toast;
 import com.alangeorge.android.bloodhound.model.GeoFence;
 import com.alangeorge.android.bloodhound.model.Location;
 import com.alangeorge.android.bloodhound.model.ModelException;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -374,7 +373,8 @@ public class GeoFenceFragment extends Fragment implements
                     .center(marker.getPosition())
                     .radius(data.getFloat(4))
                     .strokeColor(R.color.DimGray)
-                    .fillColor(R.color.DimGray));
+                    .fillColor(R.color.DimGray)
+                    .strokeWidth(0));
 
             markerCircleHashMap.put(marker, radius);
             markerGeoFenceMap.put(marker, geoFence);
