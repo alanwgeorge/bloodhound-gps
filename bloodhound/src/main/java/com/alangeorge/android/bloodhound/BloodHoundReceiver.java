@@ -26,7 +26,6 @@ public class BloodHoundReceiver extends BroadcastReceiver {
     private static final String TAG = "BloodHoundReceiver";
 
     public static final String BLOODHOUND_RECEIVER_ACTION = "com.alangeorge.android.bloodhound.BloodHoundReceiver.start";
-    public static final String ACTION_GEOFENCE_TRANSITION = "com.alangeorge.android.bloodhound.BloodHoundReceiver.geoFenceTransition";
 
     @Override
     public void onReceive(Context context, Intent intent) {
