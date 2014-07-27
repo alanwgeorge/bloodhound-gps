@@ -1,6 +1,5 @@
 package com.alangeorge.android.bloodhound;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -57,7 +56,6 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
         sendBroadcast(new Intent(BLOODHOUND_RECEIVER_ACTION));
     }
 
-    @SuppressLint("AppCompatMethod")
     @Override
     public void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
         // Restore the previously serialized current dropdown position.
@@ -68,7 +66,6 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
         getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
     }
 
-    @SuppressLint("AppCompatMethod")
     @Override
     public void onSaveInstanceState(@NotNull Bundle outState) {
         // Serialize the current dropdown position.
