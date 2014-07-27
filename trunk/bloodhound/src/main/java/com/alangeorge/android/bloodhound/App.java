@@ -7,7 +7,7 @@ public class App extends Application {
     public static Context context;
 
     /**
-     * Here we create a statically scoped public ApplicationContext available.
+     * Here we make a statically scoped public ApplicationContext available.
      * Currently this is used from the {@link com.alangeorge.android.bloodhound.BloodHoundService} to gain access to
      * the Applications ContentProvider
      */
