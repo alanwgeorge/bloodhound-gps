@@ -352,7 +352,7 @@ public class GeoFenceFragment extends Fragment implements
         data.moveToFirst();
 
         while (! data.isAfterLast()) {
-            GeoFence geoFence = null;
+            GeoFence geoFence;
             try {
                 geoFence = new GeoFence(data);
             } catch (ModelException e) {

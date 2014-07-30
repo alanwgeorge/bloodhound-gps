@@ -1,6 +1,7 @@
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Base.AppCompat.Light.DarkActionBar">
+    <!--suppress AndroidDomInspection -->
+    <style name="AppTheme" parent="Theme.Base.AppCompat.Light">
 
     </style>
 

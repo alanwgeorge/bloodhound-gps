@@ -111,7 +111,7 @@ public class BloodHoundService extends Service implements
             try {
                 geoFence = new GeoFence(geoFenceCursor);
             } catch (ModelException e) {
-                Log.e(TAG, getString(R.string.geofence_load_error) + ": " + e.getLocalizedMessage());                e.printStackTrace();
+                Log.e(TAG, getString(R.string.geofence_load_error) + ": " + e.getLocalizedMessage());
                 continue;
             }
 
@@ -160,7 +160,7 @@ public class BloodHoundService extends Service implements
             }
         });
 
-        googleApiClient.disconnect();
+//        googleApiClient.disconnect();
     }
 
     private PendingIntent createGeoFencePendingIntent() {
