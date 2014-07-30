@@ -16,7 +16,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.alangeorge.android.bloodhound.model.LocationDiff;
-import com.alangeorge.android.bloodhound.model.provider.LocationContentProvider;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +33,7 @@ import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIF
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LONGITUDE2;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_LONGITUDE_DIFF;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.LOCATIONS_DIFF_COLUMN_TIME2;
+import static com.alangeorge.android.bloodhound.model.provider.LocationContentProvider.LOCATIONS_DIFF_CONTENT_URI;
 
 /**
  * This fragment represents a ListView of differences between subsequent recorded locations.
@@ -82,7 +82,7 @@ public class LocationDiffFragment extends ListFragment implements LoaderManager.
 
         return new CursorLoader(
                 getActivity(),
-                LocationContentProvider.LOCATIONS_DIFF_CONTENT_URI,
+                LOCATIONS_DIFF_CONTENT_URI,
                 LOCATIONS_DIFF_ALL_COLUMNS,
                 LOCATIONS_DIFF_COLUMN_LATITUDE_DIFF +  " != 0 or " + LOCATIONS_DIFF_COLUMN_LONGITUDE_DIFF + " != 0",
                 null,

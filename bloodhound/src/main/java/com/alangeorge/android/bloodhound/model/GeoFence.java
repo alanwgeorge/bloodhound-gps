@@ -10,6 +10,7 @@ import java.util.Date;
 import static com.alangeorge.android.bloodhound.model.dao.DBHelper.GEOFENCES_ALL_COLUMNS;
 import static com.alangeorge.android.bloodhound.model.provider.LocationContentProvider.GEOFENCE_CONTENT_URI;
 
+@SuppressWarnings("UnusedDeclaration")
 public class GeoFence {
     private long id;
     private String name;
