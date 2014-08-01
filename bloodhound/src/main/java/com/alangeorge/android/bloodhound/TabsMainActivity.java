@@ -1,6 +1,7 @@
 package com.alangeorge.android.bloodhound;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -10,7 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
 
@@ -22,6 +30,11 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
      * current dropdown position.
      */
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final String SENDER_ID = "673992645420";
+
+    private GoogleCloudMessaging gcm;
+    private String gcmRegistrationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +42,15 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_tabs_main);
+
+        if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(this);
+            gcmRegistrationId = App.getGcmRegistrationId();
+
+            if (gcmRegistrationId.isEmpty()) {
+                registerInBackground();
+            }
+        }
 
         // Set up the action bar to show a dropdown list.
         final ActionBar actionBar = getSupportActionBar();
@@ -115,6 +137,69 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
 
         return true;
     }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Registers the application with GCM servers asynchronously.
+     * <p>
+     * Stores the registration ID and app versionCode in the application's
+     * shared preferences.
+     */
+    private void registerInBackground() {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg;
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+                    }
+                    gcmRegistrationId = gcm.register(SENDER_ID);
+                    msg = "Device registered, registration ID=" + gcmRegistrationId;
+
+                    // You should send the registration ID to your server over HTTP,
+                    // so it can use GCM/HTTP or CCS to send messages to your app.
+                    // The request to your server should be authenticated if your app
+                    // is using accounts.
+//                    sendRegistrationIdToBackend();
+
+                    // For this demo: we don't need to send it because the device
+                    // will send upstream messages to a server that echo back the
+                    // message using the 'from' address in the message.
+
+                    // Persist the regID - no need to register again.
+                    App.storeRegistrationId(gcmRegistrationId);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                    // If there is an error, don't just keep trying to register.
+                    // Require the user to click a button again, or perform
+                    // exponential back-off.
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                super.onPostExecute(msg);
+                Log.d(TAG, msg);
+            }
+        }.execute(null, null, null);
+    }
+
 
     // logging lifecycle methods
     @Override
