@@ -1,5 +1,7 @@
 package com.alangeorge.android.bloodhound;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,16 +15,33 @@ public class App extends Application {
     private static final String PROPERTY_GCM_REG_ID = "gcm_registration_id";
     private static final String PROPERTY_APP_VERSION = "app_version";
 
+    private static final String ACCOUNT = "dummyaccount";
+    private static final String ACCOUNT_TYPE = "com.alangeorge.android.bloodhound";
+
     public static Context context;
+    public static Account syncAccount = null;
 
     /**
      * Here we make a statically scoped public ApplicationContext available.
      * Currently this is used from the {@link com.alangeorge.android.bloodhound.BloodHoundService} to gain access to
      * the Applications ContentProvider
+     *
+     * We also add our dummyaccount to the {@link android.accounts.AccountManager} which is used for our SyncAdapter implementation
      */
     @Override public void onCreate() {
+        Log.d(TAG, "onCreate()");
         super.onCreate();
         context = getApplicationContext();
+
+        syncAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+
+        if (accountManager.addAccountExplicitly(syncAccount, null, null)) {
+            Log.d(TAG, "syncAccount added successfully");
+        } else {
+            Log.e(TAG, "add syncAccount returned false, may already exist");
+        }
     }
 
 

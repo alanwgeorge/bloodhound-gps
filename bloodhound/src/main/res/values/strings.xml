@@ -27,6 +27,8 @@
     <string name="error_no_google_maps_available">Google Maps unavailable</string>
     <string name="geofence_transition_notification_text"> Click notification to return to app </string>
     <string name="geofence_transition_notification_title"> %1$s geofence(s) %2$s </string>
-    <!--<string name="location_server_url">http://199.83.221.130/blood/location/update</string>-->
-    <string name="location_server_url">http://localhost:8080/blood/location/update</string>
+    <string name="action_show_device_id">Show GCM ID</string>
+    <!--<string name="location_server_url">http://localhost:8080/blood/location/update</string>-->
+    <!--<string name="location_server_url">http://10.0.2.2:8080/blood/location/update</string>-->
+    <string name="location_server_url">http://199.83.221.130/blood/location/update</string>
 </resources>

@@ -20,6 +20,7 @@ android {
 }
 
 dependencies {
+    //noinspection GradleDependency
     compile 'com.android.support:appcompat-v7:20.+'
     compile 'com.google.android.gms:play-services:5.+'
 //    compile 'com.google.android.gms:play-services:4.4.52'

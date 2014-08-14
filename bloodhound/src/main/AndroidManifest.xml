@@ -5,7 +5,6 @@
     <permission
         android:name="com.alangeorge.android.bloodhound.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-
     <permission
         android:name="com.alangeorge.android.bloodhound.maps.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
@@ -26,7 +25,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="com.alangeorge.android.bloodhound.permission.C2D_MESSAGE" />
-
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <application
         android:name=".App"
@@ -63,7 +64,6 @@
             android:enabled="true"
             android:exported="false" />
 
-
         <receiver
             android:name=".GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -99,9 +99,34 @@
                 <action android:name="com.alangeorge.android.bloodhound.action.GEOFENCE_TRANSITION" />
             </intent-filter>
         </service>
+
         <service
             android:name=".LocationUpdateIntentService"
             android:exported="false" >
+        </service>
+
+        <service
+            android:name=".AuthenticatorService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <service
+            android:name=".BloodHoundSyncService"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                       android:resource="@xml/syncadapter" />
         </service>
     </application>
 

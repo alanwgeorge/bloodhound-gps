@@ -1,7 +1,9 @@
-<menu
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.alangeorge.android.bloodhound.MainActivity">
+    tools:context="com.alangeorge.android.bloodhound.MainActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!--<item android:id="@+id/action_start" android:title="@string/action_start" android:orderInCategory="100" app:showAsAction="ifRoom" />-->
     <!--<item android:id="@+id/action_geofence_select" android:title="@string/action_geofence_select" android:orderInCategory="200" app:showAsAction="ifRoom" />-->
+    <item android:id="@+id/action_show_device_id" android:title="@string/action_show_device_id" android:orderInCategory="200" app:showAsAction="ifRoom" />
 </menu>
