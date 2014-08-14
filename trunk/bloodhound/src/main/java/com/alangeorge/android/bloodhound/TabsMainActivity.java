@@ -1,6 +1,9 @@
 package com.alangeorge.android.bloodhound;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SyncStatusObserver;
+import android.database.ContentObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,10 +13,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 import static com.alangeorge.android.bloodhound.BloodHoundReceiver.BLOODHOUND_RECEIVER_ACTION;
+import static com.alangeorge.android.bloodhound.model.provider.LocationContentProvider.LOCATIONS_CONTENT_URI;
 
 public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnNavigationListener {
     private static final String TAG = "TabsMainActivity";
@@ -35,6 +39,9 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
 
     private GoogleCloudMessaging gcm;
     private String gcmRegistrationId;
+    private ContentObserver syncAdapterContentObserver;
+    private SyncStatusObserver syncStatusObserver;
+    private Object syncStatusObserverHandle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +83,12 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
 
         // start location recording
         sendBroadcast(new Intent(BLOODHOUND_RECEIVER_ACTION));
+
+        syncAdapterContentObserver = new SyncAdaptorContentObserver(null);
+
+        getContentResolver().registerContentObserver(LOCATIONS_CONTENT_URI, true, syncAdapterContentObserver);
+
+        syncStatusObserver = new BloodHoundSyncStatusObserver();
     }
 
     @Override
@@ -111,6 +124,16 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
 //            case R.id.action_geofence_select:
 //                Intent detailIntent = new Intent(this, GeoFenceSelectionActivity.class);
 //                startActivity(detailIntent);
+            case R.id.action_show_device_id:
+                String message;
+                if (App.getGcmRegistrationId().isEmpty()) {
+                    message = "No Device ID Found";
+                } else {
+                    message = "GCM ID: " + App.getGcmRegistrationId();
+                }
+
+                Toast.makeText(App.context, message, Toast.LENGTH_LONG).show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -205,6 +228,9 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
     @Override
     protected void onStop() {
         Log.d(TAG, "onStop()");
+
+        getContentResolver().unregisterContentObserver(syncAdapterContentObserver);
+
         super.onStop();
     }
 
@@ -224,12 +250,19 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
     protected void onPause() {
         Log.d(TAG, "onPause()");
         super.onPause();
+        if (syncStatusObserverHandle != null) {
+            ContentResolver.removeStatusChangeListener(syncStatusObserverHandle);
+            syncStatusObserverHandle = null;
+        }
     }
 
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume()");
         super.onResume();
+
+        int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE | ContentResolver.SYNC_OBSERVER_TYPE_SETTINGS;
+        syncStatusObserverHandle = ContentResolver.addStatusChangeListener(mask, syncStatusObserver);
     }
 
     @Override
@@ -244,4 +277,34 @@ public class TabsMainActivity extends ActionBarActivity implements ActionBar.OnN
         super.onRestart();
     }
 
+    @Override
+    public void onTrimMemory(int level) {
+        Log.d(TAG, "onTrimMemory(" + level + ")");
+
+        switch (level) {
+            case TRIM_MEMORY_BACKGROUND:
+                Log.i(TAG, "got TRIM_MEMORY_BACKGROUND");
+                break;
+            case TRIM_MEMORY_COMPLETE:
+                Log.i(TAG, "got TRIM_MEMORY_COMPLETED");
+                break;
+            case TRIM_MEMORY_MODERATE:
+                Log.i(TAG, "got TRIM_MEMORY_MODERATE");
+                break;
+            case TRIM_MEMORY_RUNNING_CRITICAL:
+                Log.i(TAG, "got TRIM_MEMORY_RUNNING_CRITICAL");
+                break;
+            case TRIM_MEMORY_RUNNING_LOW:
+                Log.i(TAG, "got TRIM_MEMORY_RUNNING_LOW");
+                break;
+            case TRIM_MEMORY_RUNNING_MODERATE:
+                Log.i(TAG, "got TRIM_MEMORY_RUNNING_MODERATE");
+                break;
+            case TRIM_MEMORY_UI_HIDDEN:
+                Log.i(TAG, "got TRIM_MEMORY_UI_HIDDEN");
+                break;
+            default:
+                Log.i(TAG, "got unknown memory trim level");
+        }
+    }
 }

@@ -224,11 +224,35 @@ public class BloodHoundService extends Service implements
         super.onLowMemory();
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onTrimMemory(int level) {
-        Log.d(TAG, "onTaskRemoved(" + level + ")");
-        super.onTrimMemory(level);
+        Log.d(TAG, "onTrimMemory(" + level + ")");
+
+        switch (level) {
+            case TRIM_MEMORY_BACKGROUND:
+                Log.i(TAG, "got TRIM_MEMORY_BACKGROUND");
+                break;
+            case TRIM_MEMORY_COMPLETE:
+                Log.i(TAG, "got TRIM_MEMORY_COMPLETED");
+                break;
+            case TRIM_MEMORY_MODERATE:
+                Log.i(TAG, "got TRIM_MEMORY_MODERATE");
+                break;
+            case TRIM_MEMORY_RUNNING_CRITICAL:
+                Log.i(TAG, "got TRIM_MEMORY_RUNNING_CRITICAL");
+                break;
+            case TRIM_MEMORY_RUNNING_LOW:
+                Log.i(TAG, "got TRIM_MEMORY_RUNNING_LOW");
+                break;
+            case TRIM_MEMORY_RUNNING_MODERATE:
+                Log.i(TAG, "got TRIM_MEMORY_RUNNING_MODERATE");
+                break;
+            case TRIM_MEMORY_UI_HIDDEN:
+                Log.i(TAG, "got TRIM_MEMORY_UI_HIDDEN");
+                break;
+            default:
+                Log.i(TAG, "got unknown memory trim level");
+        }
     }
 
     @Override
@@ -246,7 +270,8 @@ public class BloodHoundService extends Service implements
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Log.d(TAG, "onTaskRemoved(" + rootIntent + ")");
+        //noinspection ConstantConditions
+        Log.d(TAG, "onTaskRemoved(" + rootIntent != null ? rootIntent.getAction() : "null" + ")");
         super.onTaskRemoved(rootIntent);
     }
 
