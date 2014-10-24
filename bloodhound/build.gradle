@@ -21,10 +21,9 @@ android {
 
 dependencies {
     //noinspection GradleDependency
-    compile 'com.android.support:appcompat-v7:20.+'
-    compile 'com.google.android.gms:play-services:5.+'
-//    compile 'com.google.android.gms:play-services:4.4.52'
-    compile 'com.google.code.gson:gson:2.+'
+    compile 'com.android.support:appcompat-v7:20.0.0'
+    compile 'com.google.android.gms:play-services:5.0.77'
+    compile 'com.google.code.gson:gson:2.3'
     compile 'com.intellij:annotations:+@jar'
 }
 
