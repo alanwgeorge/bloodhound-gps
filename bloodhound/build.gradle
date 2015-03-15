@@ -13,7 +13,7 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -22,23 +22,8 @@ android {
 dependencies {
     //noinspection GradleDependency
     compile 'com.android.support:appcompat-v7:20.0.0'
-    compile 'com.google.android.gms:play-services:5.0.77'
+    compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.intellij:annotations:+@jar'
 }
 
-android.applicationVariants.all { variant ->
-    task("generate" + variant.name.capitalize() + "Javadoc", type: Javadoc) {
-        title = "$name $packageName $versionName"
-        description "Generates Javadoc for $variant.name."
-        source = variant.javaCompile.source
-        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
-        classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
-        options.links("http://docs.oracle.com/javase/7/docs/api/");
-        options.links("http://d.android.com/reference/");
-        options.linksOffline("http://d.android.com/reference/", "${android.sdkDirectory}/docs/reference");
-        options.memberLevel = JavadocMemberLevel.PRIVATE;
-        exclude '**/BuildConfig.java'
-        exclude '**/R.java'
-    }
-}
