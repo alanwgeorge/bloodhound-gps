@@ -31,4 +31,5 @@
     <!--<string name="location_server_url">http://localhost:8080/blood/location/update</string>-->
     <!--<string name="location_server_url">http://10.0.2.2:8080/blood/location/update</string>-->
     <string name="location_server_url">http://199.83.221.130/blood/location/update</string>
+    <string name="no_ocations_diffs">No Location Differences Found</string>
 </resources>

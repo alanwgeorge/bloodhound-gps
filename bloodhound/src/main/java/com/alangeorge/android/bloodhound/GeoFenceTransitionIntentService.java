@@ -22,7 +22,7 @@ import java.util.List;
  * helper methods.
  */
 public class GeoFenceTransitionIntentService extends IntentService {
-    private static final String TAG = "GeoFenceTransitionIntentService";
+    private static final String TAG = "GeoFenceTrnstnIntntSrvc";
 
     public GeoFenceTransitionIntentService() {
         super("GeoFenceTransitionIntentService");

@@ -54,7 +54,7 @@ import static com.alangeorge.android.bloodhound.model.provider.LocationContentPr
  * <p>
  */
 public class LocationUpdateIntentService extends IntentService {
-    private static final String TAG = "LocationUpdateIntentService";
+    private static final String TAG = "LocationUpdateIntntSrvc";
 
     public LocationUpdateIntentService() {
         super("LocationUpdateIntentService");
