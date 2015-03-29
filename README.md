@@ -1,3 +1,5 @@
+#bloodhound-gps
+
 ![logo](bloodhound/src/main/res/drawable-hdpi/dog.png?raw=true  "Logo")
 
 An experimental Android project to play around with location services, geofencing, maps, sqlite, content provider and backend server integration.
