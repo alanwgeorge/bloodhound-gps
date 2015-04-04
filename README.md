@@ -21,7 +21,7 @@ GeoFence add/edit screen.  Picker on bottom right adjusts the fence radius.
 
 ![geofence edit](screenshots/GeoFenceEdit.png?raw=true  "GeoFence add/edit screen.  Picker on bottom right adjusts the fence radius.")
 
-Location list.  Tap location to see location on a map.
+Location list. Tap location to see location on a map.
 
 ![location list](screenshots/LocationList.png?raw=true  "Location list.  Tap location to see location on a map.")
 
